@@ -19,8 +19,8 @@ export const sendEmail = async ({
     },
     body: JSON.stringify({
       sender: {
-        name: "KS Global Services",
-        email: "ksglobalservicesllc1@gmail.com",
+        name: process.env.BREVO_SENDER_NAME,
+        email: process.env.BREVO_SENDER_EMAIL,
       },
       to: [{ email: to }],
       subject,
