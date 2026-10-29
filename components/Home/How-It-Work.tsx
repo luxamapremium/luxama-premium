@@ -66,22 +66,20 @@ export default function HowItWorks() {
 
   return (
     <section
-      className="relative bg-gray-50 py-20 md:py-32 px-6 overflow-hidden"
+      className="relative bg-background py-20 md:py-32 px-6 overflow-hidden border-b border-border/60"
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       onMouseLeave={() => setIsVisible(false)}
-      // Optional: hide glow when touch ends
       onTouchEnd={() => setIsVisible(false)}
     >
-      {/* Dynamic Background Glow */}
+      {/* Dynamic Background Glow - luxury warm gold */}
       <div
         className="pointer-events-none absolute transition-opacity duration-500 z-0"
         style={{
           width: "600px",
           height: "600px",
-          // Fixed: Changed 'bg-blue-700' to a hex or rgb value for the CSS gradient
           background:
-            "radial-gradient(circle, rgba(29, 78, 216, 0.15) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(200, 162, 74, 0.12) 0%, transparent 70%)",
           left: `${mousePos.x - 300}px`,
           top: `${mousePos.y - 300}px`,
           opacity: isVisible ? 1 : 0,
@@ -91,13 +89,13 @@ export default function HowItWorks() {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:items-start relative z-10">
         {/* Left Side: Sticky Header */}
         <div className="lg:w-1/3 lg:sticky lg:top-32">
-          <span className="text-blue-600 font-bold uppercase tracking-[0.2em] text-xs mb-4 block animate-in fade-in slide-in-from-left-4 duration-700">
+          <span className="text-gold-600 dark:text-gold-400 font-bold uppercase tracking-[0.25em] text-xs mb-3 block animate-in fade-in slide-in-from-left-4 duration-700">
             The Process
           </span>
-          <h2 className="bg-gradient-to-b from-gray-900 to-gray-600 bg-clip-text font-bold text-transparent text-4xl md:text-5xl tracking-tight leading-[1.1] mb-6 animate-in fade-in slide-in-from-left-6 duration-1000">
-            HOW IT WORKS
+          <h2 className="font-serif font-bold text-navy-900 dark:text-ice-50 text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.15] mb-6 animate-in fade-in slide-in-from-left-6 duration-1000">
+            How It <span className="text-gold-gradient">Works</span>
           </h2>
-          <p className="text-gray-600 font-medium text-lg leading-relaxed max-w-sm animate-in fade-in slide-in-from-left-8 duration-1000">
+          <p className="text-navy-700/80 dark:text-ice-200/80 font-normal text-base sm:text-lg leading-relaxed max-w-sm animate-in fade-in slide-in-from-left-8 duration-1000">
             Simple steps to expert support. Follow our streamlined process to
             get started with your professional services today.
           </p>
@@ -110,41 +108,40 @@ export default function HowItWorks() {
               key={index}
               style={{ animationDelay: `${index * 150}ms` }}
               className={cn(
-                "group relative flex flex-col p-10 rounded-[2.5rem] border border-gray-100 bg-blue-100/60 backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]",
-                // Note: 'hover:' effects trigger on "Tap" on mobile devices automatically
-                "hover:bg-white hover:shadow-2xl hover:shadow-blue-600/5 hover:-translate-y-3 animate-in fade-in slide-in-from-bottom-10 fill-mode-both",
+                "group relative flex flex-col p-8 sm:p-10 rounded-3xl border border-border/80 bg-card text-card-foreground shadow-luxury-sm transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                "hover:shadow-luxury hover:border-gold-500/40 hover:-translate-y-2 animate-in fade-in slide-in-from-bottom-10 fill-mode-both"
               )}
             >
               {/* Top Row: Number and Icon */}
-              <div className="flex items-center justify-between mb-10">
-                <span className="text-5xl font-black text-gray-300 transition-colors duration-700 group-hover:text-blue-50 italic select-none">
+              <div className="flex items-center justify-between mb-8">
+                <span className="font-serif text-5xl font-bold text-gold-500/30 transition-colors duration-500 group-hover:text-gold-500/60 select-none">
                   {step.number}
                 </span>
-                <div className="h-14 w-14 rounded-2xl bg-white border border-gray-50 flex items-center justify-center shadow-sm transition-all duration-700 group-hover:scale-110 group-hover:bg-blue-600 group-hover:border-blue-600 group-hover:rotate-6">
+                <div className="h-14 w-14 rounded-2xl bg-navy-900 text-gold-400 dark:bg-navy-800 flex items-center justify-center shadow-luxury-sm transition-all duration-500 group-hover:scale-110 group-hover:bg-gold-gradient group-hover:text-navy-950 group-hover:rotate-6">
                   {React.cloneElement(step.icon, {
                     className:
-                      "w-6 h-6 text-blue-600 group-hover:text-white transition-colors duration-500",
+                      "w-6 h-6 text-inherit transition-colors duration-300",
                   })}
                 </div>
               </div>
 
               {/* Content */}
               <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-gray-800 transition-colors duration-300 group-hover:text-blue-700">
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-navy-900 dark:text-ice-50 transition-colors duration-300 group-hover:text-gold-600 dark:group-hover:text-gold-400">
                   {step.title}
                 </h3>
-                <p className="mt-4 text-gray-500 text-base leading-relaxed font-medium transition-colors duration-500 group-hover:text-gray-700">
+                <p className="mt-4 text-navy-700/80 dark:text-ice-200/80 text-sm sm:text-base leading-relaxed font-normal transition-colors duration-300">
                   {step.description}
                 </p>
               </div>
 
               {/* Interactive Decoration */}
-              <div className="absolute bottom-6 right-10 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-2 group-hover:translate-y-0">
+              <div className="absolute bottom-6 right-8 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">
+                  <span className="text-[10px] font-bold text-gold-600 dark:text-gold-400 uppercase tracking-[0.25em]">
                     Next Step
                   </span>
-                  <div className="w-8 h-[1px] bg-blue-600 animate-pulse" />
+                  <div className="w-8 h-[1.5px] bg-gold-500" />
                 </div>
               </div>
             </div>

@@ -8,20 +8,26 @@ import { cn } from "@/lib/utils"
 function Progress({
   className,
   value,
+  variant = "default",
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> & {
+  variant?: "default" | "gold"
+}) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
+        "relative h-2 w-full overflow-hidden rounded-full bg-ice-200 dark:bg-navy-800",
         className
       )}
       {...props}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="h-full w-full flex-1 bg-primary transition-all"
+        className={cn(
+          "h-full w-full flex-1 transition-all",
+          variant === "gold" ? "bg-gold-gradient shadow-gold" : "bg-primary"
+        )}
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>

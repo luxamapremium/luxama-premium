@@ -7,7 +7,7 @@ import WhyChooseUs from "@/components/Home/Why-Choose-Us";
 
 export default function Home() {
   return (
-    <div className="bg-gray-200">
+    <div className="bg-background text-foreground min-h-screen">
       <HeroSection />
       <WhyChooseUs />
       <OurServices />

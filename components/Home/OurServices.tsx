@@ -10,13 +10,14 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createSlug } from "@/lib/slug";
+import { cn } from "@/lib/utils";
 
 const services = [
   {
     title: "Immigration & USCIS Support",
     description:
       "Expert guidance through complex residency and citizenship filing processes with precision.",
-    icon: <Users className="w-6 h-6 text-white" />,
+    icon: Users,
     featured: true,
     url: `/admins/${createSlug("Immigration USCIS Support")}`,
   },
@@ -24,7 +25,7 @@ const services = [
     title: "Tax & Financial Services",
     description:
       "Comprehensive tax preparation and strategic planning for individuals and businesses.",
-    icon: <Receipt className="w-6 h-6 text-white" />,
+    icon: Receipt,
     featured: true,
     url: `/admins/${createSlug("Tax Financial Services")}`,
   },
@@ -32,28 +33,28 @@ const services = [
     title: "Notary & Document Services",
     description:
       "Official verification and legal authentication for your critical documents.",
-    icon: <FileSignature className="w-6 h-6 text-white" />,
+    icon: FileSignature,
     url: `/admins/${createSlug("Notary Document Services")}`,
   },
   {
     title: "Business & Administrative Services",
     description:
       "Streamlined operational support to help your business scale efficiently.",
-    icon: <Briefcase className="w-6 h-6 text-white" />,
+    icon: Briefcase,
     url: `/admins/${createSlug("Business Administrative Services")}`,
   },
   {
     title: "Translation & Language Services",
     description:
       "Certified multilingual translations for legal, medical, and personal records.",
-    icon: <Languages className="w-6 h-6 text-white" />,
+    icon: Languages,
     url: `/admins/${createSlug("Translation Language Services")}`,
   },
   {
     title: "Professional Consultations",
     description:
       "One-on-one sessions with specialists to map out your specific goals.",
-    icon: <UserCheck className="w-6 h-6 text-white" />,
+    icon: UserCheck,
     url: `/admins/${createSlug("Other Services")}`,
   },
 ];
@@ -62,17 +63,21 @@ export default function ProfessionalServices() {
   const router = useRouter();
 
   return (
-    <section className="bg-blue-50 px-6 py-20 md:py-32 overflow-hidden">
+    <section className="bg-ice-100/60 dark:bg-navy-950 px-6 py-20 md:py-32 overflow-hidden border-b border-border/60 relative">
+      {/* Ambient background glows */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-gold-500/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
       <div className="relative mx-auto max-w-7xl">
         {/* Animated Header */}
-        <div className="text-center mb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
-          <span className="text-blue-600 font-bold uppercase tracking-[0.2em] text-xs mb-4 block">
+        <div className="text-center mb-16 md:mb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out">
+          <span className="text-gold-600 dark:text-gold-400 font-bold uppercase tracking-[0.25em] text-xs mb-3 block">
             Expertise You Can Trust
           </span>
-          <h2 className="bg-gradient-to-b from-gray-900 to-gray-600 bg-clip-text font-bold text-transparent text-4xl md:text-6xl tracking-tight leading-tight">
-            OUR PROFESSIONAL SERVICES
+          <h2 className="font-serif font-bold text-navy-900 dark:text-ice-50 text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight leading-tight">
+            Our Professional <span className="text-gold-gradient">Services</span>
           </h2>
-          <p className="mt-6 text-gray-500 max-w-2xl mx-auto text-lg font-medium">
+          <p className="mt-5 text-navy-700/80 dark:text-ice-200/80 max-w-2xl mx-auto text-base sm:text-lg font-normal">
             Tailored solutions designed to navigate your most important legal
             and financial milestones.
           </p>
@@ -80,59 +85,46 @@ export default function ProfessionalServices() {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 touch-manipulation">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              onClick={() => router.push(service.url)} // Make entire card clickable for better UX
-              style={{ animationDelay: `${index * 100}ms` }}
-              className={cn(
-                "group relative flex flex-col justify-between p-10 rounded-[2rem] border border-gray-100 bg-white transition-all duration-500 ease-out animate-in fade-in slide-in-from-bottom-8 fill-mode-both cursor-pointer",
-                /* Hover Effects (Desktop) */
-                "hover:bg-white hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2",
-                /* Active Effects (Mobile Touch) */
-                "active:scale-[0.97] active:bg-gray-50/50",
-                service.featured ? "md:col-span-1 lg:border-blue-50" : "",
-              )}
-            >
-              <div>
-                {/* Icon Container with Group Hover/Active scale */}
-                <div
-                  className="flex h-14 w-14 items-center justify-center rounded-2xl shadow-blue-200/50 shadow-lg mb-8 transition-all duration-500 group-hover:rotate-[10deg] group-hover:scale-110 group-active:scale-90"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
-                  }}
-                >
-                  {service.icon}
+          {services.map((service, index) => {
+            const Icon = service.icon;
+            return (
+              <div
+                key={index}
+                onClick={() => router.push(service.url)}
+                style={{ animationDelay: `${index * 100}ms` }}
+                className={cn(
+                  "group relative flex flex-col justify-between p-8 sm:p-10 rounded-3xl border border-border/70 bg-card text-card-foreground transition-all duration-500 ease-out animate-in fade-in slide-in-from-bottom-8 fill-mode-both cursor-pointer shadow-luxury-sm",
+                  "hover:shadow-luxury hover:border-gold-500/40 hover:-translate-y-2",
+                  "active:scale-[0.98]",
+                  service.featured ? "border-gold-500/30" : ""
+                )}
+              >
+                <div>
+                  {/* Icon Tile */}
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-900 text-gold-400 dark:bg-navy-800 shadow-luxury-sm mb-8 transition-all duration-500 group-hover:scale-110 group-hover:bg-gold-gradient group-hover:text-navy-950 group-hover:rotate-6">
+                    <Icon className="w-6 h-6 text-inherit transition-colors" />
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-navy-900 dark:text-ice-50 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors duration-300">
+                    {service.title}
+                  </h3>
+                  <p className="mt-4 text-navy-700/80 dark:text-ice-200/80 leading-relaxed text-sm sm:text-base font-normal">
+                    {service.description}
+                  </p>
                 </div>
 
-                <h3 className="text-2xl font-bold text-gray-800 group-hover:text-blue-700 transition-colors duration-300">
-                  {service.title}
-                </h3>
-                <p className="mt-4 text-gray-600 leading-relaxed text-base font-medium opacity-80 group-hover:opacity-100 transition-opacity">
-                  {service.description}
-                </p>
-              </div>
-
-              {/* Footer */}
-              <div className="mt-10 pt-6 border-t border-gray-100/50">
-                <div className="flex items-center gap-3 text-sm font-bold text-blue-600 uppercase tracking-widest transition-all group-hover:gap-5">
-                  Learn More
-                  <ArrowRight className="w-5 h-5 transition-transform" />
+                {/* Footer link */}
+                <div className="mt-8 pt-6 border-t border-border/50">
+                  <div className="flex items-center gap-2 text-xs font-bold text-gold-600 dark:text-gold-400 uppercase tracking-widest transition-all group-hover:gap-4">
+                    Learn More
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-
-        {/* Background Glow */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-50 rounded-full blur-[120px] -z-10 opacity-50" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gray-100 rounded-full blur-[120px] -z-10 opacity-50" />
       </div>
     </section>
   );
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(" ");
 }

@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, Playfair_Display, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "KS Global Services",
+  title: "Luxama Premium Group",
   description: "Management and Scheduling Portal",
 };
 
@@ -29,7 +37,7 @@ export default function RootLayout({
     <html lang="en" dir="ltr">
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${playfair.variable} ${geistMono.variable} font-sans antialiased`}
       >
         {/* Toast Notifications */}
         <ToastContainer position="top-right" autoClose={3000} />

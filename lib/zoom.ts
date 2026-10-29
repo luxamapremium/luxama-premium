@@ -1,3 +1,5 @@
+
+// get zoom access token
 export async function getZoomAccessToken() {
   const credentials = Buffer.from(
     `${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`,
@@ -16,9 +18,11 @@ export async function getZoomAccessToken() {
 
   const data = await response.json();
   if (!response.ok) throw new Error("Zoom Auth Failed");
-  return data.access_token;
+  return data.access_token
 }
 
+
+// create zoom meeting for a specific user
 export async function createZoomMeeting(
   topic: string,
   startTime: Date,
@@ -53,6 +57,10 @@ export async function createZoomMeeting(
     meetingId: data.id,
   };
 }
+
+
+
+
 
 // /**
 //  * Retrieves an access token using Server-to-Server OAuth.
