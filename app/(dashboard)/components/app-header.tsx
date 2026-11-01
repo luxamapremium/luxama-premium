@@ -18,7 +18,7 @@ export function AppHeader() {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
 
-        <h1 className="text-base font-medium text-gray-500">Dashboard</h1>
+        <h1 className="text-base font-medium text-muted-foreground font-sans">Dashboard</h1>
 
         <div className="ml-auto flex items-center gap-2">
           <InfoUser

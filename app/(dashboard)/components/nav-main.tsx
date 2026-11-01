@@ -69,13 +69,13 @@ export function NavMain() {
   const createSlug = (text: string) =>
     text.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase();
 
-  // Updated getClass to handle active hover states
+  // Updated getClass to handle active hover states with brand palette
   const getClass = (path: string) => {
     const isActive = pathname === path;
-    return `transition-colors duration-200 ${
+    return `transition-colors duration-200 font-sans ${
       isActive
-        ? "bg-blue-700 text-white hover:bg-blue-800 hover:text-white"
-        : "hover:bg-blue-700 hover:text-white"
+        ? "bg-navy-900 text-gold-400 font-semibold hover:bg-navy-800 hover:text-gold-300"
+        : "text-foreground/80 hover:bg-ice-100 hover:text-navy-900"
     }`;
   };
 

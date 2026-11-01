@@ -35,14 +35,14 @@ export default async function HomeDashboard() {
   }
 
   return (
-    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-10 bg-white min-h-screen">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-10 bg-background min-h-screen font-sans">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-slate-100 pb-8 gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border pb-8 gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-4xl font-bold text-navy-900 tracking-tight font-sans">
             {isAdmin ? "Admin Overview" : "My Schedule"}
           </h1>
-          <p className="text-slate-500 mt-2 font-medium">
+          <p className="text-muted-foreground mt-2 font-medium font-sans">
             {isAdmin
               ? `You have ${adminUpcomingCount} upcoming sessions to manage.`
               : `Welcome back, ${user.name}. View your upcoming consultations below.`}
@@ -51,7 +51,7 @@ export default async function HomeDashboard() {
 
         <Link
           href={isAdmin ? "/admin/bookings" : "/client/bookings"}
-          className="group flex w-fit items-center gap-3 bg-blue-700 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-xl shadow-slate-200"
+          className="group flex w-fit items-center gap-3 bg-navy-900 hover:bg-navy-800 text-gold-300 px-6 py-3 rounded-2xl font-bold transition-all shadow-luxury-sm hover:shadow-luxury font-sans"
         >
           View Full Schedule
           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -59,47 +59,47 @@ export default async function HomeDashboard() {
       </div>
 
       {/* Main Table Section */}
-      <section className="bg-white">
+      <section className="bg-card">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2 text-slate-900">
-            <LayoutDashboard className="h-5 w-5 text-blue-600" />
-            <h2 className="text-xl font-bold tracking-tight">
+          <div className="flex items-center gap-2 text-navy-900">
+            <LayoutDashboard className="h-5 w-5 text-gold-600" />
+            <h2 className="text-xl font-bold tracking-tight font-sans">
               {isAdmin ? "Priority Sessions" : "Upcoming Sessions"}
             </h2>
           </div>
         </div>
 
         {displayBookings.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/50">
-            <Calendar className="h-10 w-10 text-slate-200 mb-4" />
-            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-[2rem] bg-ice-50/50">
+            <Calendar className="h-10 w-10 text-ice-200 mb-4" />
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest font-sans">
               No sessions scheduled.
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-[2rem] border border-border bg-card shadow-luxury-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="hidden md:table-header-group bg-slate-50/50 border-b border-slate-100">
+                <thead className="hidden md:table-header-group bg-ice-50 border-b border-border">
                   <tr>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase text-muted-foreground tracking-widest font-sans">
                       Participant
                     </th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase text-muted-foreground tracking-widest font-sans">
                       Service
                     </th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase text-muted-foreground tracking-widest font-sans">
                       Schedule
                     </th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <th className="px-6 py-4 text-[10px] font-bold uppercase text-muted-foreground tracking-widest font-sans">
                       Type
                     </th>
-                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase text-muted-foreground tracking-widest font-sans">
                       Action
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-300">
+                <tbody className="divide-y divide-border">
                   {displayBookings.map((booking: any) => (
                     <BookingRow
                       key={booking._id}
@@ -117,27 +117,27 @@ export default async function HomeDashboard() {
       {/* Admin Stats */}
       {isAdmin && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-8 bg-blue-50/50 rounded-[2.5rem] border border-blue-100 flex items-center justify-between">
+          <div className="p-8 bg-ice-50 rounded-[2.5rem] border border-border flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black uppercase text-blue-400 tracking-widest">
+              <p className="text-[10px] font-bold uppercase text-gold-600 tracking-widest font-sans">
                 Total Active
               </p>
-              <p className="text-4xl font-black text-slate-900 mt-1">
+              <p className="text-4xl font-bold text-navy-900 mt-1 font-sans">
                 {adminUpcomingCount}
               </p>
             </div>
-            <Clock className="h-10 w-10 text-blue-600 opacity-20" />
+            <Clock className="h-10 w-10 text-gold-500 opacity-30" />
           </div>
-          <div className="p-8 bg-emerald-50/50 rounded-[2.5rem] border border-emerald-100 flex items-center justify-between">
+          <div className="p-8 bg-ice-50 rounded-[2.5rem] border border-border flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black uppercase text-emerald-400 tracking-widest">
+              <p className="text-[10px] font-bold uppercase text-navy-700 tracking-widest font-sans">
                 Lifetime Completed
               </p>
-              <p className="text-4xl font-black text-slate-900 mt-1">
+              <p className="text-4xl font-bold text-navy-900 mt-1 font-sans">
                 {totalPastCount}
               </p>
             </div>
-            <ShieldCheck className="h-10 w-10 text-emerald-600 opacity-20" />
+            <ShieldCheck className="h-10 w-10 text-navy-700 opacity-30" />
           </div>
         </div>
       )}
@@ -161,18 +161,18 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
     : booking.adminId?.name || "Consultant";
 
   return (
-    <tr className="group flex flex-col md:table-row hover:bg-slate-50/50 transition-colors">
+    <tr className="group flex flex-col md:table-row hover:bg-ice-50/60 transition-colors">
       {/* Participant */}
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
+          <div className="h-10 w-10 shrink-0 rounded-xl bg-navy-900 text-gold-300 flex items-center justify-center font-bold text-sm font-sans">
             {displayName.charAt(0)}
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-900">
+            <span className="text-sm font-bold text-navy-900 font-sans">
               {displayName}
             </span>
-            <span className="text-[10px] font-medium text-slate-400 md:hidden uppercase tracking-tighter">
+            <span className="text-[10px] font-medium text-muted-foreground md:hidden uppercase tracking-tighter font-sans">
               {isAdmin ? "Client" : "Consultant"}
             </span>
           </div>
@@ -181,9 +181,9 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
 
       {/* Service */}
       <td className="px-6 py-4">
-        <div className="flex items-center gap-2 text-slate-600">
-          <Briefcase className="h-3.5 w-3.5" />
-          <span className="text-sm font-medium truncate max-w-[150px]">
+        <div className="flex items-center gap-2 text-navy-800">
+          <Briefcase className="h-3.5 w-3.5 text-gold-600" />
+          <span className="text-sm font-medium truncate max-w-[150px] font-sans">
             {booking.eventId?.name || "Consultation"}
           </span>
         </div>
@@ -192,8 +192,8 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
       {/* Schedule */}
       <td className="px-6 py-4">
         <div className="flex flex-col">
-          <span className="text-sm font-bold text-slate-800">{dateStr}</span>
-          <span className="text-xs text-slate-500 font-medium">{timeStr}</span>
+          <span className="text-sm font-bold text-navy-900 font-sans">{dateStr}</span>
+          <span className="text-xs text-muted-foreground font-medium font-sans">{timeStr}</span>
         </div>
       </td>
 
@@ -201,10 +201,10 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
       <td className="px-6 py-4">
         <div
           className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide",
+            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide font-sans",
             booking.consultationType === "video"
-              ? "bg-blue-100 text-blue-700"
-              : "bg-indigo-100 text-indigo-700",
+              ? "bg-navy-900 text-gold-400"
+              : "bg-ice-100 text-navy-900 border border-ice-200",
           )}
         >
           {booking.consultationType === "video" ? (
@@ -223,12 +223,12 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
             href={isAdmin ? booking.zoomStartUrl : booking.zoomJoinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-navy-900 hover:bg-navy-800 text-gold-300 rounded-xl text-xs font-bold transition-all shadow-luxury-sm font-sans"
           >
             Join <ExternalLink className="h-3 w-3" />
           </a>
         ) : (
-          <span className="text-sm font-bold text-slate-900">
+          <span className="text-sm font-bold text-navy-900 font-sans">
             {booking.phoneNumber || "N/A"}
           </span>
         )}

@@ -78,10 +78,10 @@ export function ScheduleForm({ initialData, onSubmit, onCancel, isLoading }: Sch
   const endTime = form.watch("timeSlots.0.endTime");
 
   return (
-    <Card className="w-full">
+    <Card className="w-full font-sans border-border bg-card shadow-luxury-sm">
       <CardHeader>
-        <CardTitle>{initialData ? "Edit Schedule" : "Add New Schedule"}</CardTitle>
-        <CardDescription>
+        <CardTitle className="font-sans text-navy-900">{initialData ? "Edit Schedule" : "Add New Schedule"}</CardTitle>
+        <CardDescription className="font-sans">
           {initialData 
             ? "Update your availability for this day" 
             : "Set your availability for a specific day of the week"}
@@ -195,12 +195,14 @@ export function ScheduleForm({ initialData, onSubmit, onCancel, isLoading }: Sch
               variant="outline"
               onClick={onCancel}
               disabled={isLoading}
+              className="font-sans"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
               disabled={isLoading}
+              className="bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans shadow-luxury-sm cursor-pointer"
             >
               {isLoading ? "Saving..." : initialData ? "Update" : "Create"}
             </Button>

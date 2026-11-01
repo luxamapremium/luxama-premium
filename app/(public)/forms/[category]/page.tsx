@@ -50,27 +50,38 @@ export default async function FormCategoryPage({
   }
 
   return (
-    <div className="container max-w-5xl mx-auto py-10 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{activeTitle}</h1>
-        <p className="text-muted-foreground">
-          Please complete the form below to proceed with your request.
-        </p>
-      </div>
+    <div className="min-h-screen bg-background relative overflow-hidden py-12 md:py-20 px-4 sm:px-6 lg:px-8 border-b border-border/60">
+      {/* Subtle decorative background glow accents matching Why-Choose-Us */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 blur-[120px] pointer-events-none rounded-full" />
 
-      <div className="w-full overflow-hidden rounded-xl border shadow-lg bg-white">
-        <iframe
-          id={`jotform-iframe-${activeJotformId}`}
-          title={activeTitle}
-          src={`https://form.jotform.com/${activeJotformId}`}
-          className="w-full"
-          style={{
-            minHeight: "800px",
-            border: "none",
-          }}
-          allow="geolocation; microphone; camera; clipboard-read; clipboard-write"
-          allowFullScreen
-        />
+      <div className="container max-w-5xl mx-auto relative z-10">
+        <div className="mb-8">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase border border-border/80 bg-card/80 text-navy-800 dark:text-gold-400 shadow-xs mb-4">
+            Forms & Paperwork
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-sans font-bold text-navy-900 dark:text-ice-50 tracking-tight leading-[1.2]">
+            {activeTitle}
+          </h1>
+          <p className="mt-3 text-sm sm:text-base text-navy-700/80 dark:text-ice-200/80 font-normal leading-relaxed">
+            Please complete the form below to proceed with your request.
+          </p>
+        </div>
+
+        <div className="w-full overflow-hidden rounded-3xl border border-border/80 shadow-md bg-card">
+          <iframe
+            id={`jotform-iframe-${activeJotformId}`}
+            title={activeTitle}
+            src={`https://form.jotform.com/${activeJotformId}`}
+            className="w-full"
+            style={{
+              minHeight: "800px",
+              border: "none",
+            }}
+            allow="geolocation; microphone; camera; clipboard-read; clipboard-write"
+            allowFullScreen
+          />
+        </div>
       </div>
     </div>
   );

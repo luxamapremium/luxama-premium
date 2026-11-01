@@ -178,50 +178,54 @@ export default function EventDetails({ params }: Props) {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-gold-500" />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
-      <nav className="max-w-7xl mx-auto px-6 py-6">
+    <div className="min-h-screen bg-background relative overflow-hidden pb-20 border-b border-border/60">
+      {/* Subtle decorative background glow accents matching Why-Choose-Us */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 blur-[120px] pointer-events-none rounded-full" />
+
+      <nav className="max-w-7xl mx-auto px-6 py-6 relative z-10">
         <Link
           href={`/events/admin/${event?.adminId}`}
-          className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-all group"
+          className="inline-flex items-center text-sm font-medium text-navy-700/80 dark:text-ice-200/80 hover:text-gold-600 dark:hover:text-gold-400 transition-all group"
         >
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Back to Services
         </Link>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         {/* Left Side: Summary Card */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
-            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
+          <div className="bg-card/90 dark:bg-card/40 rounded-3xl p-8 shadow border border-border/80">
+            <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase border border-border/80 bg-card/80 text-navy-800 dark:text-gold-400 shadow-xs mb-4">
               Booking Consultation
-            </span>
-            <h1 className="text-3xl font-bold text-slate-900 mt-4 mb-6">
+            </div>
+            <h1 className="text-3xl font-bold text-navy-900 dark:text-ice-50 mt-4 mb-6 leading-tight">
               {event?.name}
             </h1>
 
             <div className="space-y-3 mb-8">
-              <div className="flex justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm">
-                <span className="flex items-center gap-2 text-slate-500">
-                  <Clock className="w-4 h-4" /> Duration
+              <div className="flex justify-between p-3.5 rounded-2xl bg-background/80 dark:bg-navy-900/60 border border-border/80 text-sm">
+                <span className="flex items-center gap-2 text-navy-700/70 dark:text-ice-200/70">
+                  <Clock className="w-4 h-4 text-gold-500" /> Duration
                 </span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-navy-900 dark:text-ice-50">
                   {event?.durationMinutes}m
                 </span>
               </div>
-              <div className="flex justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm">
-                <span className="flex items-center gap-2 text-slate-500">
-                  <CreditCard className="w-4 h-4" /> Price
+              <div className="flex justify-between p-3.5 rounded-2xl bg-background/80 dark:bg-navy-900/60 border border-border/80 text-sm">
+                <span className="flex items-center gap-2 text-navy-700/70 dark:text-ice-200/70">
+                  <CreditCard className="w-4 h-4 text-gold-500" /> Price
                 </span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-navy-900 dark:text-ice-50">
                   {event.isFree ?? event.price === 0 ? (
-                    <span className="text-emerald-600">Free</span>
+                    <span className="text-gold-600 dark:text-gold-400">Free</span>
                   ) : (
                     `$${event?.price}`
                   )}
@@ -229,12 +233,12 @@ export default function EventDetails({ params }: Props) {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-slate-100">
+            <div className="pt-6 border-t border-border/60">
               <div className="flex gap-3">
-                <div className="p-2 bg-green-50 rounded-lg">
-                  <ShieldCheck className="w-4 h-4 text-green-600" />
+                <div className="p-2 rounded-lg bg-gold-500/10 text-gold-600 dark:text-gold-400 border border-gold-500/20 shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-inherit" />
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-navy-700/70 dark:text-ice-200/70 leading-relaxed font-normal">
                   Your information is encrypted and PCI compliant. Secure
                   consultation guaranteed.
                 </p>
@@ -245,11 +249,11 @@ export default function EventDetails({ params }: Props) {
 
         {/* Right Side: Multi-Step Flow */}
         <div className="lg:col-span-8">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm min-h-[600px] flex flex-col">
+          <div className="bg-card/90 dark:bg-card/40 rounded-3xl border border-border/80 shadow min-h-[600px] flex flex-col">
             {/* Step Header */}
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-3">
-                <div className="p-2 bg-blue-600 rounded-xl text-white">
+            <div className="p-8 border-b border-border/60 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-navy-900 dark:text-ice-50 flex items-center gap-3">
+                <div className="p-2 bg-navy-900 dark:bg-navy-800 text-gold-400 rounded-xl border border-border/80">
                   {step === 1 ? (
                     <CalendarIcon className="w-5 h-5" />
                   ) : (
@@ -258,12 +262,12 @@ export default function EventDetails({ params }: Props) {
                 </div>
                 {step === 1 ? "Select Date & Time" : "Consultation Details"}
               </h2>
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 <div
-                  className={`h-1.5 w-8 rounded-full ${step >= 1 ? "bg-blue-600" : "bg-slate-200"}`}
+                  className={`h-1.5 w-8 rounded-full transition-colors ${step >= 1 ? "bg-gold-500" : "bg-border"}`}
                 />
                 <div
-                  className={`h-1.5 w-8 rounded-full ${step === 2 ? "bg-blue-600" : "bg-slate-200"}`}
+                  className={`h-1.5 w-8 rounded-full transition-colors ${step === 2 ? "bg-gold-500" : "bg-border"}`}
                 />
               </div>
             </div>
@@ -281,15 +285,15 @@ export default function EventDetails({ params }: Props) {
                           (d) => d.toDateString() === date.toDateString(),
                         ) || date < new Date(new Date().setHours(0, 0, 0, 0))
                       }
-                      className="rounded-2xl border border-slate-100 p-4 bg-slate-50/50"
+                      className="rounded-2xl border border-border/80 p-4 bg-background/60 shadow-xs"
                     />
                   </div>
 
                   <div className="flex-1 space-y-6">
                     {selectedDate ? (
                       <>
-                        <h3 className="font-bold text-sm flex items-center gap-2">
-                          <ClockIcon className="w-4 h-4 text-blue-600" />{" "}
+                        <h3 className="font-bold text-sm flex items-center gap-2 text-navy-900 dark:text-ice-50">
+                          <ClockIcon className="w-4 h-4 text-gold-500 dark:text-gold-400" />{" "}
                           Available Slots
                         </h3>
                         {slotsLoading ? (
@@ -297,7 +301,7 @@ export default function EventDetails({ params }: Props) {
                             {availableSlots.map((slot, i) => (
                               <div
                                 key={i}
-                                className="h-12 bg-slate-100 rounded-xl"
+                                className="h-12 bg-muted rounded-xl"
                               />
                             ))}
                           </div>
@@ -307,11 +311,11 @@ export default function EventDetails({ params }: Props) {
                               <button
                                 key={i}
                                 onClick={() => setSelectedSlot(slot)}
-                                className={`p-3 rounded-xl text-xs font-semibold border transition-all ${
+                                className={`p-3 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                                   selectedSlot?.startTime.getTime() ===
                                   slot.startTime.getTime()
-                                    ? "bg-blue-600 border-blue-600 text-white shadow-md scale-105"
-                                    : "bg-white border-slate-200 text-slate-600 hover:bg-blue-50 hover:border-blue-200"
+                                    ? "bg-gold-500 border-gold-500 text-navy-950 shadow-gold scale-105 font-bold"
+                                    : "bg-card border-border/80 text-foreground hover:bg-muted/80 hover:border-gold-500/40"
                                 }`}
                               >
                                 {slot.startTime.toLocaleTimeString([], {
@@ -325,16 +329,16 @@ export default function EventDetails({ params }: Props) {
                         {selectedSlot && (
                           <button
                             onClick={() => setStep(2)}
-                            className="w-full py-4 bg-blue-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-blue-800 transition-all active:scale-95 shadow-lg shadow-blue-100"
+                            className="w-full py-3.5 px-6 rounded-full bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold text-xs uppercase tracking-wider shadow-gold hover:shadow-gold-lg transition-all duration-300 cursor-pointer active:scale-[0.98] flex items-center justify-center gap-2"
                           >
-                            Next Step <ChevronRight className="w-4 h-4" />
+                            <span>Next Step</span> <ChevronRight className="w-4 h-4" />
                           </button>
                         )}
                       </>
                     ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                        <CalendarIcon className="w-8 h-8 text-slate-300 mb-2" />
-                        <p className="text-sm text-slate-400">
+                      <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-card/40 rounded-3xl border border-dashed border-border/80">
+                        <CalendarIcon className="w-8 h-8 text-navy-300 dark:text-gold-400/50 mb-2" />
+                        <p className="text-sm text-navy-700/70 dark:text-ice-200/70 font-normal">
                           Please pick a date to see available time slots.
                         </p>
                       </div>
@@ -345,15 +349,15 @@ export default function EventDetails({ params }: Props) {
                 <div className="max-w-xl mx-auto animate-in slide-in-from-right-8 duration-500">
                   <button
                     onClick={() => setStep(1)}
-                    className="mb-6 text-sm text-slate-400 flex items-center gap-2 hover:text-blue-600"
+                    className="mb-6 text-sm text-navy-700/70 dark:text-ice-200/70 flex items-center gap-2 hover:text-gold-600 dark:hover:text-gold-400 transition-colors cursor-pointer"
                   >
                     <ArrowLeft className="w-4 h-4" /> Change time
                   </button>
 
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                  <h3 className="text-2xl font-bold text-navy-900 dark:text-ice-50 mb-2">
                     How should we connect?
                   </h3>
-                  <p className="text-slate-500 mb-8">
+                  <p className="text-navy-700/80 dark:text-ice-200/80 mb-8 font-normal text-sm sm:text-base">
                     Select your preferred method for the consultation.
                   </p>
 
@@ -365,21 +369,21 @@ export default function EventDetails({ params }: Props) {
                     {hostIsSuperAdmin && (
                       <button
                         onClick={() => setConsultationType("video")}
-                        className={`p-6 rounded-3xl border-2 text-left transition-all ${
+                        className={`p-6 rounded-3xl border-2 text-left transition-all cursor-pointer ${
                           consultationType === "video"
-                            ? "border-blue-600 bg-blue-50/50"
-                            : "border-slate-100 hover:border-blue-200"
+                            ? "border-gold-500 bg-gold-500/10 shadow-xs"
+                            : "border-border/80 bg-card/60 hover:border-gold-500/40"
                         }`}
                       >
                         <Video
                           className={`w-8 h-8 mb-4 ${
                             consultationType === "video"
-                              ? "text-blue-600"
-                              : "text-slate-300"
+                              ? "text-gold-500 dark:text-gold-400"
+                              : "text-muted-foreground"
                           }`}
                         />
-                        <p className="font-bold text-slate-900">Video Call</p>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="font-bold text-navy-900 dark:text-ice-50">Video Call</p>
+                        <p className="text-xs text-navy-700/70 dark:text-ice-200/70 mt-1 font-normal">
                           Join via a secure Zoom link.
                         </p>
                       </button>
@@ -387,21 +391,21 @@ export default function EventDetails({ params }: Props) {
 
                     <button
                       onClick={() => setConsultationType("phone")}
-                      className={`p-6 rounded-3xl border-2 text-left transition-all ${
+                      className={`p-6 rounded-3xl border-2 text-left transition-all cursor-pointer ${
                         consultationType === "phone"
-                          ? "border-blue-600 bg-blue-50/50"
-                          : "border-slate-100 hover:border-blue-200"
+                          ? "border-gold-500 bg-gold-500/10 shadow-xs"
+                          : "border-border/80 bg-card/60 hover:border-gold-500/40"
                       }`}
                     >
                       <Phone
                         className={`w-8 h-8 mb-4 ${
                           consultationType === "phone"
-                            ? "text-blue-600"
-                            : "text-slate-300"
+                            ? "text-gold-500 dark:text-gold-400"
+                            : "text-muted-foreground"
                         }`}
                       />
-                      <p className="font-bold text-slate-900">Phone Call</p>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="font-bold text-navy-900 dark:text-ice-50">Phone Call</p>
+                      <p className="text-xs text-navy-700/70 dark:text-ice-200/70 mt-1 font-normal">
                         We will call your number.
                       </p>
                     </button>
@@ -409,7 +413,7 @@ export default function EventDetails({ params }: Props) {
 
                   {consultationType === "phone" && (
                     <div className="mb-8 animate-in fade-in slide-in-from-top-4">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-sm font-semibold text-navy-900 dark:text-ice-50 mb-2">
                         Your Phone Number
                       </label>
                       <input
@@ -418,13 +422,13 @@ export default function EventDetails({ params }: Props) {
                         placeholder="Enter your phone number"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="w-full p-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                        className="w-full p-4 rounded-2xl border border-border/80 bg-background text-foreground focus:ring-2 focus:ring-gold-500/40 focus:border-gold-500 outline-none transition-all"
                       />
                     </div>
                   )}
 
                   {error && (
-                    <p className="text-red-500 text-sm mb-4 font-medium">
+                    <p className="text-destructive text-sm mb-4 font-medium">
                       {error}
                     </p>
                   )}
@@ -432,13 +436,15 @@ export default function EventDetails({ params }: Props) {
                   <button
                     onClick={handleFinalBooking}
                     disabled={bookingLoading}
-                    className="w-full py-5 bg-blue-700 text-white rounded-2xl font-bold md:text-lg text-md flex items-center justify-center gap-3 hover:bg-blue-800 transition-all shadow-xl shadow-blue-100 disabled:opacity-50"
+                    className="w-full py-4 px-8 rounded-full bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold text-xs sm:text-sm uppercase tracking-wider shadow-gold hover:shadow-gold-lg transition-all duration-300 cursor-pointer active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
                   >
-                    {bookingLoading
-                      ? "Processing..."
-                      : event?.isFree ?? event?.price === 0
-                        ? "Confirm Free Booking"
-                        : `Complete Booking — $${event?.price}`}
+                    <span>
+                      {bookingLoading
+                        ? "Processing..."
+                        : event?.isFree ?? event?.price === 0
+                          ? "Confirm Free Booking"
+                          : `Complete Booking — $${event?.price}`}
+                    </span>
                     {!event?.isFree && <CreditCard className="w-5 h-5" />}
                   </button>
                 </div>

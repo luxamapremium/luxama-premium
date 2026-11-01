@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { LayoutDashboard, LogOut } from "lucide-react";
 import { DesktopUserMenuProps } from "./types";

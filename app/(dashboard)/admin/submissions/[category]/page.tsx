@@ -22,33 +22,33 @@ export default async function AdminFormPage({ params }: PageProps) {
 
   const submissions = await getFormSubmissions(formData.jotformId);
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-background font-sans">
       <div>
-        <h1 className="text-2xl font-bold">{formData.title} Submissions</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold font-sans text-navy-900">{formData.title} Submissions</h1>
+        <p className="text-muted-foreground font-sans">
           View all entries submitted via Jotform.
         </p>
       </div>
 
-      <div className="rounded-md border bg-white">
+      <div className="rounded-md border border-border bg-card shadow-luxury-sm">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Submission ID</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="font-sans text-navy-900">Submission ID</TableHead>
+              <TableHead className="font-sans text-navy-900">Date</TableHead>
+              <TableHead className="font-sans text-navy-900">Status</TableHead>
+              <TableHead className="text-right font-sans text-navy-900">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {submissions.map((sub: any) => (
               <TableRow key={sub.id}>
-                <TableCell className="font-medium">{sub.id}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium font-sans">{sub.id}</TableCell>
+                <TableCell className="font-sans">
                   {new Date(sub.created_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                  <span className="px-2 py-1 rounded-full text-xs bg-navy-900 text-gold-400 border border-gold-500/20 font-sans">
                     {sub.status || "Completed"}
                   </span>
                 </TableCell>
@@ -56,7 +56,7 @@ export default async function AdminFormPage({ params }: PageProps) {
                   <a
                     href={`https://www.jotform.com/submission/${sub.id}`}
                     target="_blank"
-                    className="text-blue-600 hover:underline text-sm"
+                    className="text-gold-600 hover:text-gold-700 hover:underline text-sm font-semibold font-sans"
                   >
                     View Details
                   </a>

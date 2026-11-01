@@ -78,24 +78,25 @@ const handleAddSlot = async (data: TimeSlot) => {
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full font-sans border-border bg-card shadow-luxury-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold">{dayOfWeek}</CardTitle>
+        <CardTitle className="text-xl font-bold font-sans text-navy-900">{dayOfWeek}</CardTitle>
         <Button
           size="sm"
           onClick={() => setShowAddForm(true)}
           disabled={isLoading}
           variant="outline"
+          className="font-sans"
         >
           <Plus className="h-4 w-4 mr-1" />
           Add Slot
         </Button>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col">
+      <CardContent className="flex flex-1 flex-col font-sans">
         
           {timeSlots.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center text-center text-muted-foreground">
-              <Clock className="h-12 w-12 mb-2 opacity-50" />
+            <div className="flex flex-1 flex-col items-center justify-center text-center text-muted-foreground font-sans">
+              <Clock className="h-12 w-12 mb-2 opacity-50 text-gold-600" />
               <p className="text-sm">No time slots added</p>
               <p className="text-xs">Click "Add Slot" to set your availability</p>
             </div>
@@ -104,21 +105,21 @@ const handleAddSlot = async (data: TimeSlot) => {
               {timeSlots.map((slot, index) => (
                 <div
                   key={index}
-                  className={`flex items-center justify-between p-3 rounded-lg border ${
-                    !slot.isEnabled ? "bg-muted/50" : ""
+                  className={`flex items-center justify-between p-3 rounded-lg border border-border ${
+                    !slot.isEnabled ? "bg-muted/50" : "bg-card"
                   }`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                      <span className={`font-medium ${!slot.isEnabled ? "line-through text-muted-foreground" : ""}`}>
+                      <span className={`font-medium ${!slot.isEnabled ? "line-through text-muted-foreground" : "text-navy-900"}`}>
                         {formatTimeRange(slot.startTime, slot.endTime)}
                       </span>
                       {slot.isEnabled ? (
-                        <Badge variant="default" className="bg-green-500">
+                        <Badge variant="default" className="bg-navy-900 text-gold-400 border border-gold-500/20 font-sans">
                           Active
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Disabled</Badge>
+                        <Badge variant="secondary" className="font-sans">Disabled</Badge>
                       )}
                     </div>
                   </div>
@@ -151,7 +152,7 @@ const handleAddSlot = async (data: TimeSlot) => {
                       onClick={() => setDeleteIndex(index)}
                       disabled={isLoading}
                       title="Remove"
-                      className="text-red-500 hover:text-red-600"
+                      className="text-destructive hover:text-destructive/80"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -165,11 +166,11 @@ const handleAddSlot = async (data: TimeSlot) => {
 
       {/* Add Time Slot Dialog */}
       {showAddForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 font-sans">
           <div className="w-full max-w-md mx-4">
-            <div className="bg-background rounded-lg shadow-lg">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-lg font-semibold">Add Time Slot - {dayOfWeek}</h3>
+            <div className="bg-background rounded-lg shadow-lg border border-border">
+              <div className="flex justify-between items-center p-4 border-b border-border">
+                <h3 className="text-lg font-semibold font-sans text-navy-900">Add Time Slot - {dayOfWeek}</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -193,11 +194,11 @@ const handleAddSlot = async (data: TimeSlot) => {
 
       {/* Edit Time Slot Dialog */}
       {editingSlot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 font-sans">
           <div className="w-full max-w-md mx-4">
-            <div className="bg-background rounded-lg shadow-lg">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-lg font-semibold">Edit Time Slot - {dayOfWeek}</h3>
+            <div className="bg-background rounded-lg shadow-lg border border-border">
+              <div className="flex justify-between items-center p-4 border-b border-border">
+                <h3 className="text-lg font-semibold font-sans text-navy-900">Edit Time Slot - {dayOfWeek}</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -222,16 +223,16 @@ const handleAddSlot = async (data: TimeSlot) => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteIndex !== null} onOpenChange={() => setDeleteIndex(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="font-sans">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Time Slot</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="font-sans text-navy-900">Remove Time Slot</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans">
               Are you sure you want to remove this time slot? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-500">
+            <AlertDialogCancel className="font-sans">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90 font-sans">
               Remove
             </AlertDialogAction>
           </AlertDialogFooter>

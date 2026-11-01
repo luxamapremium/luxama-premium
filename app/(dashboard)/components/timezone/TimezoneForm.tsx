@@ -76,27 +76,27 @@ export function TimezoneForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 p-4 border rounded-lg bg-white"
+        className="space-y-6 p-4 border border-border rounded-lg bg-card font-sans shadow-luxury-sm"
       >
         <FormField
           control={form.control}
           name="timezone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select Timezone</FormLabel>
+              <FormLabel className="font-sans text-navy-900">Select Timezone</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 value={field.value}
                 disabled={isPending}
               >
                 <FormControl>
-                  <SelectTrigger className="cursor-pointer">
+                  <SelectTrigger className="cursor-pointer font-sans">
                     <SelectValue placeholder="Select a timezone" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent position="popper">
+                <SelectContent position="popper" className="font-sans">
                   {TIMEZONES.map((tz) => (
-                    <SelectItem className="cursor-pointer" key={tz} value={tz}>
+                    <SelectItem className="cursor-pointer font-sans" key={tz} value={tz}>
                       {tz}
                     </SelectItem>
                   ))}
@@ -109,7 +109,7 @@ export function TimezoneForm() {
 
         <Button
           type="submit"
-          className="w-full bg-blue-500 cursor-pointer hover:bg-blue-600"
+          className="w-full bg-navy-900 cursor-pointer hover:bg-navy-800 text-gold-300 font-sans shadow-luxury-sm"
           disabled={isPending}
         >
           {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

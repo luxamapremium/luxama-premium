@@ -84,4 +84,6 @@ export interface MobileNavMenuProps {
   handleLogout: () => void;
   getInitials: (name: string) => string;
   router: ReturnType<typeof useRouter>;
+  headerHeight?: number;
 }
+

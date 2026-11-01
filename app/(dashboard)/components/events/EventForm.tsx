@@ -57,11 +57,11 @@ export function EventForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-3xl mx-auto space-y-4"
       >
-        <Card className="overflow-hidden border-muted-foreground/20">
-          <CardHeader className="bg-muted/30 pb-4">
+        <Card className="overflow-hidden border-border font-sans">
+          <CardHeader className="bg-ice-50 pb-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <CardTitle className="text-lg font-semibold">
+                <CardTitle className="text-lg font-semibold font-sans text-navy-900">
                   Service Details
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">
@@ -252,7 +252,7 @@ export function EventForm({
               <Button
                 type="submit"
                 size="sm"
-                className="bg-blue-600"
+                className="bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans shadow-luxury-sm cursor-pointer"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

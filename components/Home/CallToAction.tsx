@@ -1,49 +1,55 @@
+
 "use client";
+
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function CallToAction() {
   const scrollToHero = () => {
     const heroSection = document.getElementById("hero");
+
     if (heroSection) {
       heroSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <section className="relative w-full py-20 md:py-28 px-6 bg-navy-gradient text-ice-50 overflow-hidden border-t border-navy-800">
-      {/* Ambient background lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-56 bg-gold-500/10 blur-[120px] pointer-events-none rounded-full" />
-      <div className="absolute -bottom-10 right-10 w-72 h-72 bg-navy-800/50 blur-[90px] pointer-events-none rounded-full" />
+    <section className="relative w-full bg-navy-gradient text-ice-50 border-t border-navy-800 px-6 py-16 md:py-20">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-10">
 
-      <div className="max-w-4xl mx-auto text-center relative z-10">
-        <span className="text-gold-400 font-semibold tracking-[0.25em] uppercase text-xs sm:text-sm block mb-4">
-          Start Your Journey
-        </span>
-
-        <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-ice-50 mb-6 leading-[1.15]">
-          <span className="text-xl sm:text-2xl md:text-3xl font-sans font-light text-ice-200 block mb-3">
-            Ready to navigate your legal and financial milestones with
+        {/* Content */}
+        <div className="max-w-2xl">
+          <span className="text-gold-400 font-semibold tracking-[0.2em] uppercase text-xs sm:text-sm block mb-4">
+            Start Your Journey
           </span>
-          <span className="text-gold-gradient">Luxama Premium Group?</span>
-        </h2>
 
-        <p className="text-base sm:text-lg text-ice-200/85 font-normal max-w-xl mx-auto mb-10 leading-relaxed font-sans">
-          Join the clients who trust Luxama Premium Group for exceptional, confidential, and dedicated support.
-        </p>
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-5">
+            <span className="text-ice-50 font-light">
+              Ready to navigate your legal and financial milestones with{" "}
+            </span>
+            <span className="text-gold-gradient">
+              Luxama Premium Group?
+            </span>
+          </h2>
 
-        {/* High-End Button */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <p className="text-sm sm:text-base text-ice-200/85 leading-relaxed max-w-xl">
+            Join the clients who trust Luxama Premium Group for exceptional, confidential, and dedicated support.
+          </p>
+        </div>
+
+        {/* Action */}
+        <div className="shrink-0">
           <Button
             variant="gold"
             size="xl"
             onClick={scrollToHero}
-            className="group rounded-full shadow-gold hover:shadow-gold-lg font-semibold uppercase text-xs tracking-wider px-9 py-6 flex items-center gap-3 transition-all"
+            className="group cursor-pointer rounded-2xl font-semibold uppercase text-xs tracking-wider px-7 py-6 flex items-center gap-3 transition-colors"
           >
             <span>Schedule a consultation</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Button>
         </div>
+
       </div>
     </section>
   );

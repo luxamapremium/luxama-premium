@@ -26,10 +26,10 @@ export default function NewEventPage() {
   };
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-blue-100">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-background font-sans">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Create New Event</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-bold text-navy-900 font-sans">Create New Event</h1>
+        <p className="text-muted-foreground mt-2 font-sans">
           Create a new service type for your calendar
         </p>
       </div>

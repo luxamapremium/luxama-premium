@@ -34,10 +34,10 @@ export function EditEventClient({
   };
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-blue-100">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-background font-sans">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Edit Service</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-bold text-navy-900 font-sans">Edit Service</h1>
+        <p className="text-muted-foreground mt-2 font-sans">
           Update your service settings
         </p>
       </div>

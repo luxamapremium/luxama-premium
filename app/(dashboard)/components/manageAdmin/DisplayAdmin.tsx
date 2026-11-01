@@ -72,9 +72,9 @@ export default function DisplayAdmin() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 space-y-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary/40" />
-        <p className="text-slate-400 font-medium animate-pulse">
+      <div className="flex flex-col items-center justify-center py-24 space-y-4 font-sans">
+        <Loader2 className="h-10 w-10 animate-spin text-gold-500" />
+        <p className="text-muted-foreground font-medium animate-pulse font-sans">
           Synchronizing database...
         </p>
       </div>
@@ -82,24 +82,24 @@ export default function DisplayAdmin() {
   }
 
   return (
-    <div className="w-full">
-      <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50/50">
-        <h3 className="font-bold text-slate-700">Team</h3>
-        <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
+    <div className="w-full font-sans">
+      <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-ice-50/70">
+        <h3 className="font-bold text-navy-900 font-sans">Team</h3>
+        <span className="text-xs font-bold text-navy-900 bg-ice-100 px-2.5 py-1 rounded-full border border-ice-200 font-sans">
           {admins.length} ACTIVE
         </span>
       </div>
 
       <Table>
-        <TableHeader className="bg-slate-50/30">
+        <TableHeader className="bg-ice-50/40">
           <TableRow>
-            <TableHead className="pl-6 py-4 font-semibold text-slate-900">
+            <TableHead className="pl-6 py-4 font-semibold text-navy-900 font-sans">
               Member
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-slate-900">
+            <TableHead className="hidden md:table-cell font-semibold text-navy-900 font-sans">
               ID Reference
             </TableHead>
-            <TableHead className="text-right pr-6 font-semibold text-slate-900">
+            <TableHead className="text-right pr-6 font-semibold text-navy-900 font-sans">
               Manage
             </TableHead>
           </TableRow>
@@ -108,29 +108,29 @@ export default function DisplayAdmin() {
           {admins.map((admin) => (
             <TableRow
               key={admin._id}
-              className="group hover:bg-slate-50/50 transition-colors"
+              className="group hover:bg-ice-50/50 transition-colors"
             >
               <TableCell className="pl-6 py-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-10 w-10 border shadow-sm group-hover:scale-105 transition-transform">
+                  <Avatar className="h-10 w-10 border border-border shadow-sm group-hover:scale-105 transition-transform">
                     <AvatarImage
                       className="object-cover object-top"
                       src={admin.image}
                       alt={admin.name}
                     />
-                    <AvatarFallback className="bg-slate-200 text-slate-600 font-bold">
+                    <AvatarFallback className="bg-ice-200 text-navy-900 font-bold font-sans">
                       {admin.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="font-bold text-slate-800">
+                    <span className="font-bold text-navy-900 font-sans">
                       {admin.name}
                     </span>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="hidden md:table-cell">
-                <code className="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 uppercase">
+                <code className="text-[10px] bg-ice-100 px-2 py-1 rounded text-muted-foreground font-sans uppercase">
                   {admin._id.slice(-8)}
                 </code>
               </TableCell>
@@ -140,7 +140,7 @@ export default function DisplayAdmin() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all rounded-full cursor-pointer"
+                      className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all rounded-full cursor-pointer"
                       disabled={deletingId === admin._id}
                     >
                       {deletingId === admin._id ? (
@@ -150,12 +150,12 @@ export default function DisplayAdmin() {
                       )}
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="rounded-2xl">
+                  <AlertDialogContent className="rounded-2xl font-sans">
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Revoke Access?</AlertDialogTitle>
-                      <AlertDialogDescription>
+                      <AlertDialogTitle className="font-sans text-navy-900">Revoke Access?</AlertDialogTitle>
+                      <AlertDialogDescription className="font-sans">
                         This will permanently remove{" "}
-                        <span className="font-bold text-slate-900">
+                        <span className="font-bold text-navy-900 font-sans">
                           {admin.name}
                         </span>
                         . They will immediately lose all administrative
@@ -163,12 +163,12 @@ export default function DisplayAdmin() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-2 sm:gap-0 md:gap-2">
-                      <AlertDialogCancel className="rounded-xl cursor-pointer">
+                      <AlertDialogCancel className="rounded-xl cursor-pointer font-sans">
                         Keep Member
                       </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDelete(admin._id)}
-                        className="bg-red-600 hover:bg-red-700 rounded-xl cursor-pointer"
+                        className="bg-destructive hover:bg-destructive/90 rounded-xl cursor-pointer font-sans"
                       >
                         Revoke Access
                       </AlertDialogAction>
@@ -182,12 +182,12 @@ export default function DisplayAdmin() {
       </Table>
 
       {admins.length === 0 && (
-        <div className="p-20 text-center">
-          <div className="inline-flex p-4 bg-slate-100 rounded-full mb-4">
-            <Users className="w-8 h-8 text-slate-300" />
+        <div className="p-20 text-center font-sans">
+          <div className="inline-flex p-4 bg-ice-100 rounded-full mb-4">
+            <Users className="w-8 h-8 text-ice-200" />
           </div>
-          <p className="text-slate-500 font-medium">No administrators found.</p>
-          <p className="text-sm text-slate-400">
+          <p className="text-muted-foreground font-medium font-sans">No administrators found.</p>
+          <p className="text-sm text-muted-foreground font-sans">
             Switch to the 'Add Member' tab to get started.
           </p>
         </div>

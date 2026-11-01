@@ -47,8 +47,8 @@ export function TimeSlotForm({ onSubmit, onCancel, initialData, isLoading }: Tim
   };
 
   return (
-    <Card className="border-2">
-      <CardContent className="pt-6">
+    <Card className="border border-border font-sans bg-card">
+      <CardContent className="pt-6 font-sans">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -57,13 +57,13 @@ export function TimeSlotForm({ onSubmit, onCancel, initialData, isLoading }: Tim
                 name="startTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Start Time</FormLabel>
+                    <FormLabel className="font-sans text-navy-900">Start Time</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                           type="time"
-                          className="pl-9"
+                          className="pl-9 font-sans"
                           {...field}
                         />
                       </div>
@@ -78,13 +78,13 @@ export function TimeSlotForm({ onSubmit, onCancel, initialData, isLoading }: Tim
                 name="endTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>End Time</FormLabel>
+                    <FormLabel className="font-sans text-navy-900">End Time</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                           type="time"
-                          className="pl-9"
+                          className="pl-9 font-sans"
                           {...field}
                         />
                       </div>
@@ -99,9 +99,9 @@ export function TimeSlotForm({ onSubmit, onCancel, initialData, isLoading }: Tim
               control={form.control}
               name="isEnabled"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border border-border p-3 font-sans">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-sm">Enable this time slot</FormLabel>
+                    <FormLabel className="text-sm font-sans text-navy-900">Enable this time slot</FormLabel>
                   </div>
                   <FormControl>
                     <Switch
@@ -120,11 +120,16 @@ export function TimeSlotForm({ onSubmit, onCancel, initialData, isLoading }: Tim
                   variant="outline"
                   onClick={onCancel}
                   disabled={isLoading}
+                  className="font-sans"
                 >
                   Cancel
                 </Button>
               )}
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans shadow-luxury-sm cursor-pointer"
+              >
                 {isLoading ? "Saving..." : initialData ? "Update" : "Add Slot"}
               </Button>
             </div>

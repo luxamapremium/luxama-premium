@@ -61,7 +61,7 @@ export default function CreateAdminForm({ onSuccess }: Props) {
           render={({ field }) => (
             <FormItem className="flex flex-col items-center justify-center space-y-4 pt-2">
               <div className="relative group">
-                <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-slate-50 bg-slate-100 flex items-center justify-center transition-all group-hover:border-primary/20 shadow-inner">
+                <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-ice-100 bg-ice-50 flex items-center justify-center transition-all group-hover:border-gold-500/30 shadow-inner">
                   {field.value ? (
                     <img
                       src={field.value}
@@ -69,7 +69,7 @@ export default function CreateAdminForm({ onSuccess }: Props) {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="text-slate-400 flex flex-col items-center">
+                    <div className="text-muted-foreground flex flex-col items-center font-sans">
                       <FiCamera className="w-8 h-8 mb-1" />
                       <span className="text-[10px] font-semibold uppercase">
                         Upload
@@ -88,7 +88,7 @@ export default function CreateAdminForm({ onSuccess }: Props) {
                     <button
                       type="button"
                       onClick={() => open()}
-                      className="absolute bottom-1 right-1 p-2 bg-primary text-white rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95 border-2 border-white"
+                      className="absolute bottom-1 right-1 p-2 bg-navy-900 text-gold-300 rounded-full shadow-luxury-sm hover:scale-110 transition-transform active:scale-95 border-2 border-white"
                     >
                       <FiCamera className="w-4 h-4" />
                     </button>
@@ -106,13 +106,13 @@ export default function CreateAdminForm({ onSuccess }: Props) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-slate-600 font-medium">
+                <FormLabel className="text-navy-900 font-medium font-sans">
                   Full Name
                 </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Jane Doe"
-                    className="h-11 bg-slate-50/50 border-slate-200 focus:bg-white transition-all"
+                    className="h-11 bg-ice-50/50 border-border focus:bg-card transition-all font-sans"
                     {...field}
                   />
                 </FormControl>
@@ -127,14 +127,14 @@ export default function CreateAdminForm({ onSuccess }: Props) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600 font-medium">
+                  <FormLabel className="text-navy-900 font-medium font-sans">
                     Email Address
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
                       placeholder="admin@example.com"
-                      className="h-11 bg-slate-50/50 border-slate-200"
+                      className="h-11 bg-ice-50/50 border-border font-sans"
                       {...field}
                     />
                   </FormControl>
@@ -148,14 +148,14 @@ export default function CreateAdminForm({ onSuccess }: Props) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600 font-medium">
+                  <FormLabel className="text-navy-900 font-medium font-sans">
                     Password
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
                       placeholder="••••••••"
-                      className="h-11 bg-slate-50/50 border-slate-200"
+                      className="h-11 bg-ice-50/50 border-border font-sans"
                       {...field}
                     />
                   </FormControl>
@@ -167,7 +167,7 @@ export default function CreateAdminForm({ onSuccess }: Props) {
         </div>
 
         {form.formState.errors.root && (
-            <p className="text-sm font-medium text-destructive text-center">
+            <p className="text-sm font-medium text-destructive text-center font-sans">
             {form.formState.errors.root.message}
             </p>
         )}
@@ -175,7 +175,7 @@ export default function CreateAdminForm({ onSuccess }: Props) {
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
-          className="w-full h-12 text-base font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+          className="w-full h-12 text-base font-bold bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans shadow-luxury-sm hover:shadow-luxury transition-all active:scale-[0.98] cursor-pointer"
         >
           {form.formState.isSubmitting ? "Creating..." : "Create Account"}
         </Button>

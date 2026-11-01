@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   UserCheck,
   Calculator,
@@ -33,31 +32,31 @@ export const DEFAULT_MENU: MenuItem[] = [
     items: [
       {
         title: "Immigration & USCIS Support",
-        description: "Schedule a consultation for USCIS application guidance",
+        description: "1-on-1 strategy sessions with accredited USCIS specialists",
         icon: <UserCheck className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/admins/${createSlug("Immigration USCIS Support")}`,
       },
       {
         title: "Tax & Financial Services",
-        description: "Book an appointment for tax prep and financial planning",
+        description: "Certified tax preparation, IRS compliance & financial planning",
         icon: <Calculator className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/admins/${createSlug("Tax Financial Services")}`,
       },
       {
         title: "Notary & Document Services",
-        description: "Set a time for official document notarization",
+        description: "Licensed notary public, certified affidavits & apostille handling",
         icon: <Stamp className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/admins/${createSlug("Notary Document Services")}`,
       },
       {
         title: "Business & Administrative Services",
-        description: "Consult with us regarding business setup and admin",
+        description: "LLC formation, state compliance & business advisory",
         icon: <Briefcase className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/admins/${createSlug("Business Administrative Services")}`,
       },
       {
         title: "Translation & Language Services",
-        description: "Book a professional interpreter or translator",
+        description: "Certified document translations & professional interpreters",
         icon: <Languages className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/admins/${createSlug("Translation Language Services")}`,
       },
@@ -67,66 +66,66 @@ export const DEFAULT_MENU: MenuItem[] = [
     title: "Forms",
     url: "#",
     items: [
-      {
-        title: "Immigration & USCIS Support",
-        description: "Select a specific USCIS form to begin your application",
-        icon: <FileText className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
-        url: "#",
-        items: [
-          {
-            title: "Form I-90 – Green Card Replacement",
-            url: "/forms/immigration-uscis-support?form=form-i-90",
-          },
-          {
-            title: "Form I-129f – Fiancé(E) / K-1 Visa",
-            url: "/forms/immigration-uscis-support?form=form-i-129f",
-          },
-          {
-            title: "Form I-130 – Petition For Alien Relative",
-            url: "/forms/immigration-uscis-support?form=form-i-130",
-          },
-          {
-            title: "Form I-130a – Spouse Beneficiary Information",
-            url: "/forms/immigration-uscis-support?form=form-i-130a",
-          },
-          {
-            title: "Form I-131 – Travel Document / Advance Parole",
-            url: "/forms/immigration-uscis-support?form=form-i-131",
-          },
-          {
-            title: "Form I-485 – Adjustment Of Status",
-            url: "/forms/immigration-uscis-support?form=form-i-485",
-          },
-          {
-            title: "Form I-589 – Asylum Application",
-            url: "/forms/immigration-uscis-support?form=form-i-589",
-          },
-          {
-            title: "Form I-751 – Remove Conditions On Green Card",
-            url: "/forms/immigration-uscis-support?form=form-i-751",
-          },
-          {
-            title: "Form I-765 – Work Permit Application",
-            url: "/forms/immigration-uscis-support?form=form-i-765",
-          },
-          {
-            title: "Form I-821 – Temporary Protected Status (TPS)",
-            url: "/forms/immigration-uscis-support?form=form-i-821",
-          },
-          {
-            title: "Form I-864 – Affidavit Of Support (Sponsorship)",
-            url: "/forms/immigration-uscis-support?form=form-i-864",
-          },
-          {
-            title: "Form N-400 – U.S. Citizenship (Naturalization)",
-            url: "/forms/immigration-uscis-support?form=form-n-400",
-          },
-          {
-            title: "Form N-600 – Certificate Of Citizenship",
-            url: "/forms/immigration-uscis-support?form=form-n-600",
-          },
-        ],
-      },
+      // {
+      //   title: "Immigration & USCIS Support",
+      //   description: "Select a specific USCIS form to begin your application",
+      //   icon: <FileText className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
+      //   url: "#",
+      //   items: [
+      //     {
+      //       title: "Form I-90 – Green Card Replacement",
+      //       url: "/forms/immigration-uscis-support?form=form-i-90",
+      //     },
+      //     {
+      //       title: "Form I-129f – Fiancé(E) / K-1 Visa",
+      //       url: "/forms/immigration-uscis-support?form=form-i-129f",
+      //     },
+      //     {
+      //       title: "Form I-130 – Petition For Alien Relative",
+      //       url: "/forms/immigration-uscis-support?form=form-i-130",
+      //     },
+      //     {
+      //       title: "Form I-130a – Spouse Beneficiary Information",
+      //       url: "/forms/immigration-uscis-support?form=form-i-130a",
+      //     },
+      //     {
+      //       title: "Form I-131 – Travel Document / Advance Parole",
+      //       url: "/forms/immigration-uscis-support?form=form-i-131",
+      //     },
+      //     {
+      //       title: "Form I-485 – Adjustment Of Status",
+      //       url: "/forms/immigration-uscis-support?form=form-i-485",
+      //     },
+      //     {
+      //       title: "Form I-589 – Asylum Application",
+      //       url: "/forms/immigration-uscis-support?form=form-i-589",
+      //     },
+      //     {
+      //       title: "Form I-751 – Remove Conditions On Green Card",
+      //       url: "/forms/immigration-uscis-support?form=form-i-751",
+      //     },
+      //     {
+      //       title: "Form I-765 – Work Permit Application",
+      //       url: "/forms/immigration-uscis-support?form=form-i-765",
+      //     },
+      //     {
+      //       title: "Form I-821 – Temporary Protected Status (TPS)",
+      //       url: "/forms/immigration-uscis-support?form=form-i-821",
+      //     },
+      //     {
+      //       title: "Form I-864 – Affidavit Of Support (Sponsorship)",
+      //       url: "/forms/immigration-uscis-support?form=form-i-864",
+      //     },
+      //     {
+      //       title: "Form N-400 – U.S. Citizenship (Naturalization)",
+      //       url: "/forms/immigration-uscis-support?form=form-n-400",
+      //     },
+      //     {
+      //       title: "Form N-600 – Certificate Of Citizenship",
+      //       url: "/forms/immigration-uscis-support?form=form-n-600",
+      //     },
+      //   ],
+      // },
       {
         title: "Tax & Financial Services",
         description: "Fill out necessary tax documents and financial forms",

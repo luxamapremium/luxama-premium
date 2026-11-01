@@ -34,8 +34,22 @@ export const Navbar = ({
     "Immigration & USCIS Support"
   );
 
+  const headerRef = useRef<HTMLElement>(null);
   const navContainerRef = useRef<HTMLDivElement>(null);
   const { isScrolled } = useNavbarScroll();
+  const [headerHeight, setHeaderHeight] = useState<number>(60);
+
+  // Keep track of exact header height for mobile dropdown alignment
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    updateHeaderHeight();
+    window.addEventListener("resize", updateHeaderHeight);
+    return () => window.removeEventListener("resize", updateHeaderHeight);
+  }, [isScrolled, isMobileMenuOpen]);
 
   const closeAllMenus = () => {
     setActiveDropdown(null);
@@ -63,7 +77,7 @@ export const Navbar = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -72,18 +86,15 @@ export const Navbar = ({
     };
   }, []);
 
-  // Body scroll lock when mobile menu is open
+  // Body scroll lock when mobile menu is open (never lock documentElement as it breaks sticky positioning)
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
 
@@ -103,8 +114,10 @@ export const Navbar = ({
 
   return (
     <header
+      ref={headerRef}
+      style={{ "--navbar-height": `${headerHeight}px` } as React.CSSProperties}
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
+        "sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow,padding] duration-300",
         isMobileMenuOpen
           ? "bg-background border-b border-border/80 py-2.5 shadow-luxury-sm"
           : isScrolled
@@ -188,6 +201,7 @@ export const Navbar = ({
         handleLogout={handleLogout}
         getInitials={getInitials}
         router={router}
+        headerHeight={headerHeight}
       />
     </header>
   );

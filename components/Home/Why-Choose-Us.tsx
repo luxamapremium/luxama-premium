@@ -1,91 +1,123 @@
+"use client";
+
 import {
   ShieldCheck,
-  Globe,
-  MessageSquare,
-  FileCheck,
-  CreditCard,
+  FileCheck2,
+  Layers,
+  CalendarClock,
+  ArrowRight,
 } from "lucide-react";
 
-const features = [
-  {
-    title: "Professional & Confidential",
-    description:
-      "Your privacy is our priority. We maintain the highest standards of integrity and security in every interaction.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Nationwide Service",
-    description:
-      "No matter where you are located, Luxama Premium Group provides seamless support across the entire country.",
-    icon: Globe,
-  },
-  {
-    title: "Clear Communication",
-    description:
-      "We believe in transparency. Stay informed with consistent updates and direct access to our expert team.",
-    icon: MessageSquare,
-  },
-  {
-    title: "Organized & Accurate Documentation",
-    description:
-      "Detail-oriented processing ensures your records are precise, compliant, and easy to manage.",
-    icon: FileCheck,
-  },
-  {
-    title: "Transparent Fees",
-    description:
-      "Straightforward pricing with no hidden costs. We provide clear value for premium professional services.",
-    icon: CreditCard,
-  },
-];
-
 export default function WhyChooseUs() {
-  return (
-    <div className="bg-background">
-      <section
-        id="features"
-        className="relative block px-6 py-20 md:py-28 md:px-10 border-b border-border/60 overflow-hidden"
-      >
-        {/* Subtle decorative background gradient accent */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] pointer-events-none rounded-full" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 blur-[120px] pointer-events-none rounded-full" />
+  const scrollToHero = () => {
+    const heroSection = document.getElementById("hero");
+    if (heroSection) {
+      heroSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-        <div className="relative mx-auto max-w-5xl text-center z-10">
-          <span className="text-gold-600 dark:text-gold-400 my-3 flex items-center justify-center font-bold uppercase tracking-[0.25em] text-xs">
-            Trust & Excellence
-          </span>
-          <h2 className="block w-full font-serif font-bold text-navy-900 dark:text-ice-50 text-3xl sm:text-5xl tracking-tight leading-tight">
-            Why Clients Choose{" "}
-            <span className="text-gold-gradient">Luxama Premium Group</span>
+  return (
+    <section
+      id="features"
+      className="relative block px-6 py-20 md:py-28 md:px-10 border-b border-border/60 overflow-hidden bg-background"
+    >
+      {/* Subtle decorative background glow accents */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 blur-[120px] pointer-events-none rounded-full" />
+
+      <div className="relative mx-auto max-w-7xl z-10">
+        {/* Header Section matching screenshot layout */}
+        <div className="mb-12 max-w-3xl">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase border border-border/80 bg-card/80 text-navy-800 dark:text-gold-400 shadow-xs mb-5">
+            Why Choose Us
+          </div>
+          <h2 className="font-sans font-bold text-3xl sm:text-4xl lg:text-5xl text-navy-900 dark:text-ice-50 tracking-tight leading-[1.2]">
+            Why <span className="text-gold-gradient">Luxama Premium Group</span> is The Right Choice for You
           </h2>
-          <p className="mx-auto my-4 w-full max-w-xl text-center font-normal leading-relaxed text-navy-700/80 dark:text-ice-200/80 text-base sm:text-lg">
-            We combine industry expertise with a client-first approach to
-            deliver exceptional results with total reliability.
-          </p>
         </div>
 
-        <div className="relative mx-auto max-w-7xl z-10 grid grid-cols-1 gap-8 pt-12 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <div
-                key={index}
-                className="group cursor-pointer rounded-2xl border border-border/70 bg-card p-8 text-center shadow-luxury-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-luxury hover:border-gold-500/40 active:scale-[0.98]"
-              >
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-navy-900 text-gold-400 dark:bg-navy-800 shadow-luxury-sm transition-all duration-500 ease-out group-hover:scale-110 group-hover:bg-gold-gradient group-hover:text-navy-950">
-                  <Icon className="w-6 h-6 text-inherit transition-colors" />
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Card 1: Expert Specialists */}
+            <div className="group rounded-3xl border border-border/80 bg-card/90 dark:bg-card/40 p-7 sm:p-8 shadow hover:shadow-md hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full border border-border/80 dark:border-navy-700/80 bg-background/80 dark:bg-navy-900/60 flex items-center justify-center text-navy-900 dark:text-gold-400 mb-6 shadow-xs group-hover:scale-110 group-hover:border-gold-500/50 group-hover:text-gold-600 dark:group-hover:text-gold-300 transition-all">
+                <ShieldCheck className="w-5 h-5 text-inherit" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-sans font-bold text-navy-900 dark:text-ice-50 mb-3 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+                Expert Specialists
+              </h3>
+              <p className="text-navy-700/80 dark:text-ice-200/80 text-sm sm:text-base leading-relaxed font-normal">
+                Work directly with seasoned professionals in immigration processing, notary legalization, and tax planning. We bring verified expertise and rigorous attention to detail to every case.
+              </p>
+            </div>
+
+            {/* Card 2: Certified & Compliant */}
+            <div className="group rounded-3xl border border-border/80 bg-card/90 dark:bg-card/40 p-7 sm:p-8 shadow hover:shadow-md hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full border border-border/80 dark:border-navy-700/80 bg-background/80 dark:bg-navy-900/60 flex items-center justify-center text-navy-900 dark:text-gold-400 mb-6 shadow-xs group-hover:scale-110 group-hover:border-gold-500/50 group-hover:text-gold-600 dark:group-hover:text-gold-300 transition-all">
+                <FileCheck2 className="w-5 h-5 text-inherit" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-sans font-bold text-navy-900 dark:text-ice-50 mb-3 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+                Certified & Compliant
+              </h3>
+              <p className="text-navy-700/80 dark:text-ice-200/80 text-sm sm:text-base leading-relaxed font-normal">
+                Ensure seamless acceptance by authorities with certified translations, USCIS-compliant filings, and state-authorized notary authentication recognized by institutions nationwide.
+              </p>
+            </div>
+
+            {/* Card 3: Wide Card (spanning 2 columns on md+) */}
+            <div className="group md:col-span-2 rounded-3xl border border-border/80 bg-card/90 dark:bg-card/40 p-7 sm:p-8 shadow hover:shadow-md hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-start">
+              <div className="w-12 h-12 rounded-full border border-border/80 dark:border-navy-700/80 bg-background/80 dark:bg-navy-900/60 flex items-center justify-center text-navy-900 dark:text-gold-400 mb-6 shadow-xs group-hover:scale-110 group-hover:border-gold-500/50 group-hover:text-gold-600 dark:group-hover:text-gold-300 transition-all">
+                <Layers className="w-5 h-5 text-inherit" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-sans font-bold text-navy-900 dark:text-ice-50 mb-3 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+                Comprehensive Legal & Administrative Solutions
+              </h3>
+              <p className="text-navy-700/80 dark:text-ice-200/80 text-sm sm:text-base leading-relaxed font-normal">
+                From personal tax returns and business administrative support to certified translations and complex immigration paperwork, Luxama Premium Group provides an all-in-one suite of professional services. Our unified approach eliminates stress, prevents costly filing errors, and accelerates your milestones.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Section (1 Column): Tall Featured Card */}
+          <div className="lg:col-span-1 flex">
+            <div className="group rounded-3xl border border-navy-800 dark:border-gold-500/20 bg-navy-900 dark:bg-navy-950 p-7 sm:p-9 shadow hover:shadow-md hover:border-gold-500/40 transition-all duration-300 flex flex-col justify-between relative overflow-hidden w-full text-ice-50">
+              {/* Subtle top ambient lighting inside card */}
+              <div className="absolute -top-16 -right-16 w-48 h-48 bg-gold-500/10 blur-[60px] pointer-events-none rounded-full" />
+
+              <div>
+                <div className="w-12 h-12 rounded-full border border-ice-100/20 dark:border-gold-500/30 bg-white/5 flex items-center justify-center text-gold-400 mb-6 shadow-xs group-hover:scale-110 group-hover:border-gold-400/60 transition-all">
+                  <CalendarClock className="w-5 h-5 text-inherit" />
                 </div>
-                <h3 className="mt-6 text-xl font-serif font-bold text-navy-900 dark:text-ice-50 transition-colors duration-300 group-hover:text-gold-600 dark:group-hover:text-gold-400">
-                  {feature.title}
+
+                <h3 className="text-2xl sm:text-3xl font-sans font-bold text-ice-50 mb-5 leading-snug group-hover:text-gold-300 transition-colors">
+                  Flexible Consultation Schedules
                 </h3>
-                <p className="my-4 mb-0 font-normal leading-relaxed text-navy-700/80 dark:text-ice-200/80 text-sm sm:text-base">
-                  {feature.description}
+
+                <p className="text-ice-200/85 text-sm sm:text-base leading-relaxed mb-4 font-normal">
+                  At Luxama Premium Group, we understand the importance of balancing important legal and financial deadlines with a demanding lifestyle. That’s why our professional consultations are available on-demand, in-person, or virtually—allowing you to move forward at your own pace.
+                </p>
+
+                <p className="text-ice-200/75 text-sm sm:text-base leading-relaxed font-normal">
+                  Whether you are an individual managing time-sensitive filings or a growing business planning your next milestone, we customize our schedule and support to fit your needs.
                 </p>
               </div>
-            );
-          })}
+
+              {/* Bottom Call to Action Button */}
+              <div className="mt-8 pt-4">
+                <button
+                  type="button"
+                  onClick={scrollToHero}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold text-xs uppercase tracking-wider shadow-gold hover:shadow-gold-lg transition-all duration-300 cursor-pointer active:scale-[0.98] group/btn"
+                >
+                  <span>Schedule Consultation</span>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

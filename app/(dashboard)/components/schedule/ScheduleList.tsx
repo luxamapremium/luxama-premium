@@ -59,20 +59,20 @@ export function ScheduleList({ schedules, onEdit, onDelete, onToggle, isLoading 
 
   const getStatusBadge = (isEnabled: boolean) => {
     return isEnabled ? (
-      <Badge variant="default" className="bg-green-500">
+      <Badge variant="default" className="bg-navy-900 text-gold-400 border border-gold-500/20 font-sans">
         Active
       </Badge>
     ) : (
-      <Badge variant="secondary">Disabled</Badge>
+      <Badge variant="secondary" className="font-sans">Disabled</Badge>
     );
   };
 
   if (schedules.length === 0) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <p className="text-muted-foreground mb-4">No schedules set up yet</p>
-          <p className="text-sm text-muted-foreground">
+      <Card className="font-sans border-border bg-card shadow-luxury-sm">
+        <CardContent className="flex flex-col items-center justify-center py-12 font-sans">
+          <p className="text-muted-foreground mb-4 font-sans">No schedules set up yet</p>
+          <p className="text-sm text-muted-foreground font-sans">
             Click the "Add Schedule" button to set your availability
           </p>
         </CardContent>
@@ -82,10 +82,10 @@ export function ScheduleList({ schedules, onEdit, onDelete, onToggle, isLoading 
 
   return (
     <>
-      <Card>
+      <Card className="font-sans border-border bg-card shadow-luxury-sm">
         <CardHeader>
-          <CardTitle>Your Schedule</CardTitle>
-          <CardDescription>
+          <CardTitle className="font-sans text-navy-900">Your Schedule</CardTitle>
+          <CardDescription className="font-sans">
             Manage your weekly availability schedule
           </CardDescription>
         </CardHeader>
@@ -139,7 +139,7 @@ export function ScheduleList({ schedules, onEdit, onDelete, onToggle, isLoading 
                         onClick={() => setDeleteId(schedule._id)}
                         disabled={isLoading}
                         title="Delete"
-                        className="text-red-500 hover:text-red-600"
+                        className="text-destructive hover:text-destructive/80 font-sans"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -153,17 +153,17 @@ export function ScheduleList({ schedules, onEdit, onDelete, onToggle, isLoading 
       </Card>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="font-sans">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="font-sans text-navy-900">Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription className="font-sans">
               This action cannot be undone. This will permanently delete the schedule
               for this day.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-500">
+            <AlertDialogCancel className="font-sans">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90 font-sans">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

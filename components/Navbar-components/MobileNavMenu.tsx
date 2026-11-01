@@ -18,6 +18,7 @@ export const MobileNavMenu = ({
   handleLogout,
   getInitials,
   router,
+  headerHeight,
 }: MobileNavMenuProps) => {
   const [openMobileSections, setOpenMobileSections] = useState<string[]>([]);
 
@@ -33,15 +34,21 @@ export const MobileNavMenu = ({
       role="dialog"
       aria-modal="true"
       aria-label="Mobile Navigation Menu"
+      style={{
+        top: headerHeight ? `${headerHeight}px` : "var(--navbar-height, 3.75rem)",
+        height: headerHeight
+          ? `calc(100dvh - ${headerHeight}px)`
+          : "calc(100dvh - var(--navbar-height, 3.75rem))",
+      }}
       className={cn(
-        "absolute top-full left-0 right-0 w-full h-[calc(100dvh-100%)] bg-background border-t border-border/80 shadow-2xl z-50 lg:hidden flex flex-col transition-all duration-300 ease-out overflow-hidden",
+        "fixed inset-x-0 bottom-0 bg-background border-t border-border/80 shadow-2xl z-50 lg:hidden flex flex-col transition-all duration-300 ease-out overflow-hidden overscroll-contain",
         isOpen
           ? "opacity-100 translate-y-0 visible pointer-events-auto"
           : "opacity-0 -translate-y-2 invisible pointer-events-none"
       )}
     >
       {/* Scrollable Links Area */}
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-2">
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-2 overscroll-contain">
         {menu.map((item) => {
           const hasSubmenu = Boolean(item.items && item.items.length > 0);
           const isSectionOpen = openMobileSections.includes(item.title);

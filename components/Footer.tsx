@@ -29,9 +29,8 @@ export const Footer = () => {
             </Link>
 
             <p className="text-sm text-ice-200/80 leading-relaxed max-w-sm">
-              Providing premier USCIS guidance, corporate structuring, tax preparation,
-              certified translation, and concierge administrative services to help you navigate
-              your journey with distinction.
+             Delivering expert USCIS guidance, corporate structuring, tax preparation, certified translation,
+             and premium administrative services to support your journey with confidence and distinction.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -56,7 +55,7 @@ export const Footer = () => {
 
           {/* Quick Links (2 cols on lg) */}
           <div className="lg:col-span-2 flex flex-col gap-4">
-            <h3 className="font-serif text-sm font-semibold uppercase tracking-wider text-gold-400">
+            <h3 className="font-sans text-sm font-semibold uppercase tracking-wider text-gold-400">
               Company
             </h3>
             <ul className="flex flex-col gap-3 text-sm text-ice-200/80">
@@ -85,7 +84,7 @@ export const Footer = () => {
 
           {/* Services (2 cols on lg) */}
           <div className="lg:col-span-2 flex flex-col gap-4">
-            <h3 className="font-serif text-sm font-semibold uppercase tracking-wider text-gold-400">
+            <h3 className="font-sans text-sm font-semibold uppercase tracking-wider text-gold-400">
               Services
             </h3>
             <ul className="flex flex-col gap-3 text-sm text-ice-200/80">
@@ -119,7 +118,7 @@ export const Footer = () => {
 
           {/* Concierge & Support (3 cols on lg) */}
           <div className="lg:col-span-3 flex flex-col gap-4">
-            <h3 className="font-serif text-sm font-semibold uppercase tracking-wider text-gold-400">
+            <h3 className="font-sans text-sm font-semibold uppercase tracking-wider text-gold-400">
               Concierge
             </h3>
             <ul className="flex flex-col gap-3.5 text-sm text-ice-200/80">
@@ -131,7 +130,7 @@ export const Footer = () => {
                   <div className="p-2 rounded-lg bg-navy-900 border border-navy-800 text-gold-400 group-hover:border-gold-500/40 transition-colors shrink-0">
                     <LuPhoneCall className="size-4" />
                   </div>
-                  <span>+1 (407) 325-4909</span>
+                  <span>+1 (000) 000-0000</span>
                 </a>
               </li>
 
@@ -143,7 +142,7 @@ export const Footer = () => {
                   <div className="p-2 rounded-lg bg-navy-900 border border-navy-800 text-gold-400 group-hover:border-gold-500/40 transition-colors shrink-0">
                     <MdOutlineMail className="size-4" />
                   </div>
-                  <span>ksglobalservicesllc1@gmail.com</span>
+                  <span>info@luxamapremiumgroup.com</span>
                 </a>
               </li>
 
@@ -153,7 +152,7 @@ export const Footer = () => {
                     <IoLocationOutline className="size-4" />
                   </div>
                   <span className="leading-relaxed">
-                    8421 S Orange Blossom Trl 108, Orlando, FL 32809
+                     2331 E Irlo Bronson Memorial Hwy, Kissimmee, FL 34744, United States.
                   </span>
                 </div>
               </li>

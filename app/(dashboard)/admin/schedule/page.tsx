@@ -162,11 +162,11 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 bg-blue-100">
+    <div className="container mx-auto py-8 px-4 bg-background font-sans">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Schedule Management</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold text-navy-900 font-sans">Schedule Management</h1>
+          <p className="text-muted-foreground mt-1 font-sans">
             Manage your availability by adding multiple time slots for each day
           </p>
         </div>

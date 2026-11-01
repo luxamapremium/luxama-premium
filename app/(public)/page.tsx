@@ -1,4 +1,3 @@
-import FeaturedBook from "@/components/Home/Book";
 import CallToAction from "@/components/Home/CallToAction";
 import HeroSection from "@/components/Home/HeroSection";
 import HowItWork from "@/components/Home/How-It-Work";
@@ -12,7 +11,6 @@ export default function Home() {
       <WhyChooseUs />
       <OurServices />
       <HowItWork />
-      <FeaturedBook />
       <CallToAction />
     </div>
   );

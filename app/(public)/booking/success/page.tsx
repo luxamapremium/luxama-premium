@@ -5,56 +5,46 @@ import { CheckCircle, Mail, Download, Globe } from "lucide-react";
 
 export default function ThankYouPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center">
-      {/* Subtle Top Decorative Bar */}
-      <div className="h-1.5 w-full" />
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col items-center border-b border-border/60">
+      {/* Subtle decorative background glow accents matching Why-Choose-Us */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gold-500/5 blur-[120px] pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-navy-800/5 dark:bg-navy-800/20 blur-[120px] pointer-events-none rounded-full" />
 
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-w-4xl w-full text-center">
-        {/* Animated Success Badge */}
-
-        {/* Hero Text */}
-        <span className="text-blue-600 font-bold uppercase tracking-[0.2em] text-sm mb-4">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-20 max-w-4xl w-full text-center">
+        {/* Eyebrow badge */}
+        <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase border border-border/80 bg-card/80 text-navy-800 dark:text-gold-400 shadow-xs mb-5">
           Request Received
-        </span>
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight mb-6">
+        </div>
+
+        <h1 className="text-4xl md:text-6xl font-sans font-bold text-navy-900 dark:text-ice-50 tracking-tight leading-[1.2] mb-6">
           Thank You for Choosing <br />
-          <span className="bg-gradient-to-b from-blue-900 to-blue-600 bg-clip-text text-transparent">
-            KS Global Services
-          </span>
+          <span className="text-gold-gradient">Luxama Premium Group</span>
         </h1>
 
-        <p className="max-w-2xl text-lg text-gray-500 font-medium leading-relaxed mb-10">
-          Your consultation request has been successfully processed.{" "}
+        <p className="max-w-2xl text-base sm:text-lg text-navy-700/80 dark:text-ice-200/80 font-normal leading-relaxed mb-10">
+          Your consultation request has been successfully processed. We look forward to assisting you.
         </p>
 
         {/* Next Steps Grid */}
-        <div className=" w-full mb-12">
-          <div className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-col items-center">
-            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <Mail className="w-5 h-5 text-blue-600" />
+        <div className="w-full max-w-md mb-12">
+          <div className="group rounded-3xl border border-border/80 bg-card/90 dark:bg-card/40 p-7 sm:p-8 shadow hover:shadow-md hover:border-gold-500/40 transition-all flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-full border border-border/80 dark:border-navy-700/80 bg-background/80 dark:bg-navy-900/60 flex items-center justify-center text-navy-900 dark:text-gold-400 mb-4 shadow-xs group-hover:scale-110 group-hover:border-gold-500/50 group-hover:text-gold-600 dark:group-hover:text-gold-300 transition-all">
+              <Mail className="w-5 h-5 text-inherit" />
             </div>
-            <h3 className="font-bold text-gray-900 mb-1">Check Email</h3>
-            <p className="text-sm text-gray-500 text-center">
-              A confirmation email has been sent to your inbox.
+            <h3 className="text-xl font-sans font-bold text-navy-900 dark:text-ice-50 mb-2 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+              Check Email
+            </h3>
+            <p className="text-sm text-navy-700/80 dark:text-ice-200/80 font-normal">
+              A confirmation email has been sent to your inbox with your appointment details.
             </p>
           </div>
-
-          {/* <div className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-col items-center">
-            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <Download className="w-5 h-5 text-blue-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1">Save Receipt</h3>
-            <p className="text-sm text-gray-500 text-center">
-              Download your booking summary for your records.
-            </p>
-          </div> */}
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
           <Link
             href="/dashboard"
-            className="w-full sm:w-64 py-4 px-8 rounded-xl bg-blue-900 text-white font-bold transition-all hover:bg-blue-800 hover:shadow-md hover:-translate-y-1 active:translate-y-0"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold text-xs uppercase tracking-wider shadow-gold hover:shadow-gold-lg transition-all duration-300 cursor-pointer active:scale-[0.98]"
           >
             Go to Dashboard
           </Link>

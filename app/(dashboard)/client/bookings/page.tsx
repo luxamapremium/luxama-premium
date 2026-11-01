@@ -37,21 +37,21 @@ export default async function Bookings() {
     );
 
   return (
-    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-12 bg-white min-h-screen">
-      <div className="border-b border-slate-100 pb-8">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-12 bg-background min-h-screen font-sans">
+      <div className="border-b border-border pb-8">
+        <h1 className="text-4xl font-bold text-navy-900 tracking-tight font-sans">
           My Bookings
         </h1>
-        <p className="text-slate-500 mt-2 font-medium">
+        <p className="text-muted-foreground mt-2 font-medium font-sans">
           View and manage your upcoming consultations.
         </p>
       </div>
 
       {/* Upcoming Section */}
       <section>
-        <div className="flex items-center gap-2 mb-8 text-blue-700">
-          <Clock className="h-5 w-5" />
-          <h2 className="text-xl font-bold tracking-tight uppercase">
+        <div className="flex items-center gap-2 mb-8 text-navy-900 font-sans">
+          <Clock className="h-5 w-5 text-gold-600" />
+          <h2 className="text-xl font-bold tracking-tight uppercase font-sans">
             Upcoming Sessions
           </h2>
         </div>
@@ -69,9 +69,9 @@ export default async function Bookings() {
 
       {/* History Section */}
       <section className="pt-6">
-        <div className="flex items-center gap-2 mb-8 text-slate-400">
-          <History className="h-5 w-5" />
-          <h2 className="text-xl font-bold tracking-tight uppercase">
+        <div className="flex items-center gap-2 mb-8 text-muted-foreground font-sans">
+          <History className="h-5 w-5 text-gold-600" />
+          <h2 className="text-xl font-bold tracking-tight uppercase font-sans text-navy-900">
             Past History
           </h2>
         </div>
@@ -105,10 +105,10 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
   return (
     <div
       className={cn(
-        "group relative flex flex-col bg-slate-50/50 border rounded-[2rem] p-6 transition-all duration-500",
+        "group relative flex flex-col bg-card border rounded-[2rem] p-6 transition-all duration-500 font-sans shadow-luxury-sm",
         isPast
-          ? "border-slate-300"
-          : "border-blue-200 hover:bg-white hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1",
+          ? "border-border opacity-70"
+          : "border-border hover:border-gold-500/50 hover:shadow-luxury-lg hover:-translate-y-1",
       )}
     >
       {/* Header: Expert Info */}
@@ -116,17 +116,17 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
         <div className="flex items-center gap-4 min-w-0">
           <div
             className={cn(
-              "h-12 w-12 rounded-2xl flex items-center justify-center text-lg font-bold shadow-sm",
-              isPast ? "bg-slate-200 text-slate-500" : "bg-blue-900 text-white",
+              "h-12 w-12 rounded-2xl flex items-center justify-center text-lg font-bold shadow-sm font-sans",
+              isPast ? "bg-ice-200 text-muted-foreground" : "bg-navy-900 text-gold-300",
             )}
           >
             {booking.adminId?.name?.charAt(0) || <User className="h-5 w-5" />}
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-slate-900 text-lg leading-tight truncate">
+            <h3 className="font-bold text-navy-900 text-lg leading-tight truncate font-sans">
               {booking.adminId?.name || "Consultant"}
             </h3>
-            <p className="text-sm text-blue-600 font-medium flex items-center gap-1.5 truncate">
+            <p className="text-sm text-gold-600 font-medium flex items-center gap-1.5 truncate font-sans">
               <Mail className="h-3.5 w-3.5 shrink-0" />
               {booking.adminId?.email}
             </p>
@@ -136,10 +136,10 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
         {/* Type Badge */}
         <div
           className={cn(
-            "p-2 rounded-xl border",
+            "p-2 rounded-xl border font-sans",
             booking.consultationType === "video"
-              ? "bg-blue-50 border-blue-100 text-blue-600"
-              : "bg-indigo-50 border-indigo-100 text-indigo-600",
+              ? "bg-navy-900 border-gold-500/20 text-gold-400"
+              : "bg-ice-100 border-ice-200 text-navy-900",
           )}
         >
           {booking.consultationType === "video" ? (
@@ -151,22 +151,22 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
       </div>
 
       {/* Merged Information Block */}
-      <div className="space-y-4 py-6 border-y border-slate-300">
+      <div className="space-y-4 py-6 border-y border-border">
         {/* Service Name Row */}
         <div className="flex items-start gap-3">
-          <div className="mt-1 p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+          <div className="mt-1 p-2 bg-card rounded-lg border border-border shadow-sm">
             <Briefcase
               className={cn(
                 "h-4 w-4",
-                !isPast ? "text-blue-600" : "text-slate-400",
+                !isPast ? "text-gold-600" : "text-muted-foreground",
               )}
             />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-0.5">
+            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest mb-0.5 font-sans">
               Service
             </p>
-            <p className="text-sm font-bold text-slate-800 truncate">
+            <p className="text-sm font-bold text-navy-900 truncate font-sans">
               {booking.eventId?.name || "Standard Consultation"}
             </p>
           </div>
@@ -174,20 +174,20 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
 
         {/* Date & Time Row */}
         <div className="flex items-start gap-3">
-          <div className="mt-1 p-2 bg-white rounded-lg border border-slate-100 shadow-sm">
+          <div className="mt-1 p-2 bg-card rounded-lg border border-border shadow-sm">
             <Calendar
               className={cn(
                 "h-4 w-4",
-                !isPast ? "text-blue-600" : "text-slate-400",
+                !isPast ? "text-gold-600" : "text-muted-foreground",
               )}
             />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-0.5">
+            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest mb-0.5 font-sans">
               Scheduled On
             </p>
-            <p className="text-sm font-bold text-slate-800">{dateStr}</p>
-            <p className="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-0.5">
+            <p className="text-sm font-bold text-navy-900 font-sans">{dateStr}</p>
+            <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1 mt-0.5 font-sans">
               <Clock className="h-3 w-3" /> {timeStr}{" "}
               <span className="mx-1">•</span> <Timer className="h-3 w-3" />{" "}
               {booking.eventId?.duration || 30}m
@@ -203,7 +203,7 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
                 href={booking.zoomJoinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-colors shadow-lg shadow-blue-200"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-navy-900 hover:bg-navy-800 text-gold-300 rounded-2xl text-sm font-bold transition-colors shadow-luxury-sm font-sans"
               >
                 <Video className="h-4 w-4" />
                 Join Zoom Meeting
@@ -212,7 +212,7 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
             ) : booking.consultationType === "phone" && booking.phoneNumber ? (
               <a
                 href={`tel:${booking.phoneNumber}`}
-                className="flex items-center justify-center gap-2 w-full py-3 bg-slate-900 hover:bg-black text-white rounded-2xl text-sm font-bold transition-colors shadow-lg shadow-slate-200"
+                className="flex items-center justify-center gap-2 w-full py-3 bg-navy-900 hover:bg-navy-800 text-gold-300 rounded-2xl text-sm font-bold transition-colors shadow-luxury-sm font-sans"
               >
                 <Phone className="h-4 w-4" />
                 Call {booking.phoneNumber}
@@ -224,16 +224,16 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
         {/* Status & Payment Row */}
         <div className="flex items-center justify-between gap-4 pt-2">
           <div className="flex flex-col">
-            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1.5">
+            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest mb-1.5 font-sans">
               Booking & Status
             </p>
             <div className="flex flex-wrap gap-2">
               <span
                 className={cn(
-                  "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter border",
+                  "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter border font-sans",
                   booking.status === "confirmed"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                    : "bg-amber-50 text-amber-700 border-amber-100",
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-amber-50 text-amber-700 border-amber-200",
                 )}
               >
                 <ShieldCheck className="h-3 w-3" />
@@ -242,10 +242,10 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1.5">
+            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest mb-1.5 font-sans">
               Paid
             </p>
-            <p className="text-xl font-black text-slate-900">
+            <p className="text-xl font-bold text-navy-900 font-sans">
               ${booking.eventId?.price || 0}
             </p>
           </div>
@@ -254,11 +254,11 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
 
       {/* Footer Meta */}
       <div className="mt-6 flex items-center justify-center">
-        <div className="text-[10px] font-bold text-slate-600 flex items-center gap-2">
+        <div className="text-[10px] font-bold text-muted-foreground flex items-center gap-2 font-sans">
           <span className="uppercase tracking-widest">
             Ref: {booking._id.slice(-6)}
           </span>
-          {!isPast && <span className="h-1 w-1 bg-slate-300 rounded-full" />}
+          {!isPast && <span className="h-1 w-1 bg-border rounded-full" />}
           {!isPast && (
             <span>
               Booked {new Date(booking.createdAt).toLocaleDateString()}
@@ -272,9 +272,9 @@ function BookingCard({ booking, isPast }: { booking: any; isPast: boolean }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-slate-100 rounded-[2.5rem] bg-slate-50/50">
-      <Calendar className="h-10 w-10 text-slate-200 mb-4" />
-      <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-[2.5rem] bg-ice-50/50 font-sans">
+      <Calendar className="h-10 w-10 text-ice-200 mb-4" />
+      <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest font-sans">
         {message}
       </p>
     </div>

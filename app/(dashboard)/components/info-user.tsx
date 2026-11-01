@@ -68,7 +68,7 @@ export function InfoUser({ user }: NavUserProps) {
                   src={user.avatar}
                   alt={user.name}
                 />
-                <AvatarFallback className="rounded-lg bg-gray-300 text-blue-500 font-medium">
+                <AvatarFallback className="rounded-lg bg-ice-200 text-navy-900 font-semibold font-sans">
                   {initials}
                 </AvatarFallback>
               </Avatar>

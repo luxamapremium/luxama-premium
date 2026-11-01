@@ -211,47 +211,46 @@
   }
 }
 
-@layer utilities {
-  .animate-pause {
-    animation-play-state: paused !important;
-  }
-
-  /* Signature Gold Gradient (gold-600 -> gold-400 -> gold-500) */
-  .bg-gold-gradient {
-    background-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
-  }
-  .text-gold-gradient {
-    background-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
-  .border-gold-gradient {
-    border-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%) 1;
-  }
-
-  /* Gold Dividers */
-  .gold-divider {
-    height: 1px;
-    background-image: linear-gradient(90deg, transparent 0%, #C8A24A 50%, transparent 100%);
-  }
-  .gold-divider-full {
-    height: 1px;
-    background-image: linear-gradient(90deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
-  }
-
-  /* Navy Gradient Section (navy-950 -> navy-900 -> navy-800) */
-  .bg-navy-gradient {
-    background-image: linear-gradient(180deg, #060D24 0%, #0B1736 60%, #132450 100%);
-  }
-  .bg-navy-radial {
-    background-image: radial-gradient(ellipse at top, #132450 0%, #0B1736 50%, #060D24 100%);
-  }
-
-  /* Focus Ring */
-  .focus-ring-gold {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px #C8A24A;
-  }
+@utility animate-pause {
+  animation-play-state: paused !important;
 }
+
+/* Signature Gold Gradient (gold-600 -> gold-400 -> gold-500) */
+@utility bg-gold-gradient {
+  background-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
+}
+@utility text-gold-gradient {
+  background-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+@utility border-gold-gradient {
+  border-image: linear-gradient(135deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%) 1;
+}
+
+/* Gold Dividers */
+@utility gold-divider {
+  height: 1px;
+  background-image: linear-gradient(90deg, transparent 0%, #C8A24A 50%, transparent 100%);
+}
+@utility gold-divider-full {
+  height: 1px;
+  background-image: linear-gradient(90deg, #A8802A 0%, #E0BE6A 50%, #C8A24A 100%);
+}
+
+/* Navy Gradient Section (navy-950 -> navy-900 -> navy-800) */
+@utility bg-navy-gradient {
+  background-image: linear-gradient(180deg, #060D24 0%, #0B1736 60%, #132450 100%);
+}
+@utility bg-navy-radial {
+  background-image: radial-gradient(ellipse at top, #132450 0%, #0B1736 50%, #060D24 100%);
+}
+
+/* Focus Ring */
+@utility focus-ring-gold {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px #C8A24A;
+}
+

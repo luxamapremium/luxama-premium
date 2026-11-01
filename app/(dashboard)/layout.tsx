@@ -23,26 +23,28 @@ export default function DashboardLayout({
 
   if (isPending || !session) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        Loading...
+      <div className="flex h-screen items-center justify-center font-sans bg-background text-foreground">
+        <span className="text-muted-foreground animate-pulse font-medium">Loading...</span>
       </div>
     );
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 50)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <AppHeader />
-        <main className="flex flex-1">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="font-sans [&_h1]:font-sans [&_h2]:font-sans [&_h3]:font-sans [&_h4]:font-sans [&_h5]:font-sans [&_h6]:font-sans min-h-screen bg-background text-foreground">
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 50)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <SidebarInset className="bg-background text-foreground">
+          <AppHeader />
+          <main className="flex flex-1">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

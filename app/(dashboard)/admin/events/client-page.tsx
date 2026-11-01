@@ -32,16 +32,16 @@ export function EventsClient({ initialEvents }: EventsClientProps) {
   };
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-blue-100">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-background font-sans">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Services</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-3xl font-bold text-navy-900 font-sans">Services</h1>
+          <p className="text-muted-foreground mt-2 font-sans">
             Manage your service types
           </p>
         </div>
         <Button
-          className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+          className="bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans cursor-pointer shadow-luxury-sm"
           onClick={() => router.push("/admin/events/new")}
         >
           <Plus className="h-4 w-4 mr-1" />
@@ -50,13 +50,13 @@ export function EventsClient({ initialEvents }: EventsClientProps) {
       </div>
 
       {events.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed rounded-lg">
-          <h3 className="text-lg font-semibold mb-2">No services yet</h3>
-          <p className="text-muted-foreground mb-6">
+        <div className="text-center py-20 border-2 border-dashed border-border rounded-lg bg-card">
+          <h3 className="text-lg font-semibold mb-2 text-navy-900 font-sans">No services yet</h3>
+          <p className="text-muted-foreground mb-6 font-sans">
             Create your first service to start accepting bookings
           </p>
           <Button
-            className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            className="bg-navy-900 hover:bg-navy-800 text-gold-300 font-sans cursor-pointer shadow-luxury-sm"
             onClick={() => router.push("/admin/events/new")}
           >
             <Plus className="h-4 w-4 mr-1" />
