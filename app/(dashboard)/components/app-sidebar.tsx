@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { IconInnerShadowTop } from "@tabler/icons-react";
 
 import { NavMain } from "@/app/(dashboard)/components/nav-main";
 import {
@@ -26,7 +25,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/">KS Dashboard</Link>
+              <Link href="/">Back Home</Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

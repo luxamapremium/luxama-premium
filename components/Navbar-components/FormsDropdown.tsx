@@ -18,7 +18,7 @@ export const FormsDropdown = ({
 
   return (
     <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-full pt-3 w-full max-w-5xl z-50">
-      <div className="rounded-3xl border border-border/80 bg-popover/95 backdrop-blur-2xl text-popover-foreground shadow-xl p-6 transition-all duration-200 animate-in fade-in-0 zoom-in-95">
+      <div className="rounded-3xl border border-border/80 bg-popover backdrop-blur-2xl text-popover-foreground shadow-xl p-6 transition-all duration-200 animate-in fade-in-0 zoom-in-95">
         <div className="grid grid-cols-12 gap-6">
           {/* Left Column: Form categories */}
           <div className="col-span-5 space-y-1">

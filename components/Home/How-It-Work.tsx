@@ -22,7 +22,7 @@ const features: FeatureStep[] = [
     content:
       "Choose a verified expert dedicated to your specific legal, immigration, certified translation, or tax planning needs.",
     image:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1627161683077-e34782c24d81?q=80&w=703&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
   },
   {
     id: 2,

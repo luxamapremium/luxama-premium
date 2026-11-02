@@ -15,25 +15,7 @@ export const AppointmentsDropdown = ({
 }: AppointmentsDropdownProps) => {
   return (
     <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-full pt-3 w-fit max-w-xl z-50">
-      <div className="rounded-3xl border border-border/80 bg-popover/95 backdrop-blur-2xl text-popover-foreground shadow-2xl p-5 transition-all duration-200 animate-in fade-in-0 zoom-in-95">
-        {/* Header: Trust & Advisory Header */}
-        <div className="flex items-center justify-between pb-3.5 mb-2 border-b border-border/60">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                Consultation Advisory
-              </span>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-navy-700/20 text-navy-700 dark:text-navy-700 border border-navy-500/25">
-                <ShieldCheck className="size-3 text-navy-700 dark:text-navy-700" />
-                USCIS Compliant
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Book confidential 1-on-1 sessions with verified specialists
-            </p>
-          </div>
-        </div>
-
+      <div className="rounded-3xl border border-border/80 bg-popover backdrop-blur-2xl text-popover-foreground shadow-2xl p-5 transition-all duration-200 animate-in fade-in-0 zoom-in-95">
         {/* Services List with Upgraded Typography & Service Badges */}
         <div className="space-y-1.5">
           {item.items?.map((sub) => {

@@ -245,11 +245,11 @@ export default function About() {
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </Link>
             <a
-              href="tel:4073254909"
+              href="tel:7869070814"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-border/80 bg-card/80 hover:bg-card text-navy-900 dark:text-ice-100 font-semibold text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer"
             >
               <PhoneCall className="w-4 h-4 text-gold-500" />
-              <span>Call +1 (407) 325-4909</span>
+              <span>Call +1 (786) 907-0814</span>
             </a>
           </div>
         </div>

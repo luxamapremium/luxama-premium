@@ -78,7 +78,7 @@ export default function HeroSection() {
             visibleCards={admins.length}
             tint="#060D24"
             autoplay={true}
-            autoplayDelay={3500}
+            autoplayDelay={8000} //8 seconds
             renderItem={(item) => (
               <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
                 {/* Subtle bottom gradient overlay for text readability */}

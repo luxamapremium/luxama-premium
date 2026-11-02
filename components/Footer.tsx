@@ -36,7 +36,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3 pt-2">
               <Link
                 target="_blank"
-                href="https://www.instagram.com/kingson_ksa?igsh=MWRocjUwdzBqeDA2dw%3D%3D&utm_source=qr"
+                href=""
                 aria-label="Instagram"
                 className="p-2.5 rounded-full border border-navy-800 bg-navy-900 text-ice-200 hover:text-gold-400 hover:border-gold-500/40 hover:bg-navy-800/80 transition-all shadow-xs"
               >
@@ -44,7 +44,7 @@ export const Footer = () => {
               </Link>
               <Link
                 target="_blank"
-                href="https://www.facebook.com/share/1B2bGGQBpW/?mibextid=wwXIfr"
+                href=""
                 aria-label="Facebook"
                 className="p-2.5 rounded-full border border-navy-800 bg-navy-900 text-ice-200 hover:text-gold-400 hover:border-gold-500/40 hover:bg-navy-800/80 transition-all shadow-xs"
               >
@@ -130,7 +130,7 @@ export const Footer = () => {
                   <div className="p-2 rounded-lg bg-navy-900 border border-navy-800 text-gold-400 group-hover:border-gold-500/40 transition-colors shrink-0">
                     <LuPhoneCall className="size-4" />
                   </div>
-                  <span>+1 (000) 000-0000</span>
+                  <span>+1 (786) 907-0814</span>
                 </a>
               </li>
 
