@@ -1,6 +1,6 @@
 "use server";
 
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 
 // Helper to define allowed roles
@@ -11,7 +11,7 @@ const ADMIN_ROLES = ["admin", "super-admin"];
  */
 export async function getAdmins() {
   try {
-    const db = client.db("auth_db");
+    const db = getAuthDb();
 
     const admins = await db
       .collection("user")
@@ -48,7 +48,7 @@ export async function getAdminById(adminId: string) {
       return { success: false, error: "Invalid Admin ID format." };
     }
 
-    const db = client.db("auth_db");
+    const db = getAuthDb();
 
     const admin = await db.collection("user").findOne(
       {

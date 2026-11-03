@@ -6,7 +6,7 @@ import { Event } from "@/lib/models/Event";
 import mongoose from "mongoose";
 import { createZoomMeeting } from "@/lib/zoom";
 import { sendEmail } from "@/lib/email/sendEmail";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 import { verifyUser } from "@/lib/auth/check-auth";
 
@@ -84,7 +84,7 @@ export async function createBookingCheckout({
     const bookingId = booking._id.toString();
 
     try {
-      const db = client.db("auth_db");
+      const db = getAuthDb();
 
       const userDetails = await db
         .collection("user")

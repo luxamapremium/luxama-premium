@@ -1,7 +1,7 @@
 "use server";
 
 import connectDB from "@/lib/db";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { Event } from "@/lib/models/Event";
 import { ObjectId } from "mongodb";
 
@@ -24,7 +24,7 @@ export default async function fetchAdminsByEventCategory(category: string) {
     ).map((id) => new ObjectId(id));
 
     // 3. Connect to the auth database to fetch user details
-    const db = client.db("auth_db");
+    const db = getAuthDb();
 
     // 4. Fetch the admin details (Filtering by role here)
     const admins = await db

@@ -22,4 +22,10 @@ if (process.env.NODE_ENV === "development") {
   client = new MongoClient(url, options);
 }
 
+export const AUTH_DB_NAME = process.env.AUTH_DB_NAME || "auth_db";
+
+export function getAuthDb() {
+  return client.db(AUTH_DB_NAME);
+}
+
 export default client;

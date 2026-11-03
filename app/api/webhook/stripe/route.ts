@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import connectDB from "@/lib/db";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { Booking } from "@/lib/models/Booking";
 import { ObjectId } from "mongodb";
 import { sendEmail } from "@/lib/email/sendEmail";
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     }
 
     try {
-      const db = client.db("auth_db");
+      const db = getAuthDb();
 
       const userDetails = await db
         .collection("user")

@@ -4,7 +4,7 @@ import connectDB from "@/lib/db";
 import { Booking } from "@/lib/models/Booking";
 import { Event } from "@/lib/models/Event";
 import { verifySuperAdmin } from "@/lib/auth/check-auth";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 
 export default async function fetchAllBookingsAdminsAction(
@@ -41,7 +41,7 @@ export default async function fetchAllBookingsAdminsAction(
     const userIds = bookings.map((b) => new ObjectId(b.userId));
     const adminIds = bookings.map((b) => new ObjectId(b.adminId));
 
-    const db = client.db("auth_db");
+    const db = getAuthDb();
     const [users, admins] = await Promise.all([
       db
         .collection("user")
