@@ -54,15 +54,30 @@ function serializeDocument(doc: any): any {
 /* ==============================
     OVERLAP CHECK
 ============================== */
+function parseMinutes(val: string | Date): number {
+  if (typeof val === "string") {
+    if (val.includes(":") && !val.includes("T")) {
+      const [h, m] = val.split(":").map(Number);
+      return h * 60 + m;
+    }
+    const d = new Date(val);
+    return d.getUTCHours() * 60 + d.getUTCMinutes();
+  }
+  if (val instanceof Date) {
+    return val.getUTCHours() * 60 + val.getUTCMinutes();
+  }
+  return 0;
+}
+
 function checkForOverlap(timeSlots: any[]): boolean {
   if (!timeSlots || timeSlots.length <= 1) return false;
 
   const sorted = [...timeSlots].sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    (a, b) => parseMinutes(a.startTime) - parseMinutes(b.startTime),
   );
 
   for (let i = 0; i < sorted.length - 1; i++) {
-    if (new Date(sorted[i].endTime) > new Date(sorted[i + 1].startTime)) {
+    if (parseMinutes(sorted[i].endTime) > parseMinutes(sorted[i + 1].startTime)) {
       return true;
     }
   }
@@ -91,8 +106,14 @@ export async function getAdminSchedules() {
       dayOfWeek: schedule.dayOfWeek,
       timeSlots: (schedule.timeSlots || []).map((slot: any) => ({
         _id: slot._id ? slot._id.toString() : undefined,
-        startTime: convertFromUTC(slot.startTime, timezone),
-        endTime: convertFromUTC(slot.endTime, timezone),
+        startTime:
+          typeof slot.startTime === "string" && !slot.startTime.includes("T")
+            ? slot.startTime
+            : convertFromUTC(slot.startTime, timezone),
+        endTime:
+          typeof slot.endTime === "string" && !slot.endTime.includes("T")
+            ? slot.endTime
+            : convertFromUTC(slot.endTime, timezone),
         isEnabled: slot.isEnabled ?? true,
       })),
     }));
@@ -116,12 +137,11 @@ export async function upsertSchedule(data: ScheduleFormData) {
     const admin = await verifyAdmin();
     await connectDB();
 
-    const timezone = await getAdminTimezone();
     const validatedData = scheduleSchema.parse(data);
 
     const convertedSlots = validatedData.timeSlots.map((slot) => ({
-      startTime: convertToUTC(slot.startTime, timezone),
-      endTime: convertToUTC(slot.endTime, timezone),
+      startTime: slot.startTime,
+      endTime: slot.endTime,
       isEnabled: slot.isEnabled ?? true,
     }));
 
@@ -176,12 +196,11 @@ export async function addTimeSlot(
     await connectDB();
 
     const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
-    const timezone = await getAdminTimezone();
     const validated = timeSlotSchema.parse(timeSlot);
 
     const newSlot = {
-      startTime: convertToUTC(validated.startTime, timezone),
-      endTime: convertToUTC(validated.endTime, timezone),
+      startTime: validated.startTime,
+      endTime: validated.endTime,
       isEnabled: validated.isEnabled ?? true,
     };
 
@@ -313,12 +332,11 @@ export async function updateTimeSlot(
     await connectDB();
 
     const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
-    const timezone = await getAdminTimezone();
     const validated = timeSlotSchema.parse(timeSlot);
 
     const updatedSlot = {
-      startTime: convertToUTC(validated.startTime, timezone),
-      endTime: convertToUTC(validated.endTime, timezone),
+      startTime: validated.startTime,
+      endTime: validated.endTime,
       isEnabled: validated.isEnabled ?? true,
     };
 

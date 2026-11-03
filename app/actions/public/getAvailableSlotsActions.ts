@@ -6,6 +6,7 @@ import { Booking } from "@/lib/models/Booking";
 import { Event } from "@/lib/models/Event";
 import { Types } from "mongoose";
 import { getAdminTimezoneById } from "@/app/actions/timezoneAction";
+import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
 
 export interface AvailableSlot {
   startTime: Date;
@@ -140,24 +141,21 @@ export async function getAvailableSlots(
     // Generate slots
     const allPossibleSlots: TimeRange[] = [];
 
+    const targetDate = new Date(`${dateString}T12:00:00.000Z`);
+
     for (const timeSlot of enabledSlots) {
-      const slotStart = new Date(timeSlot.startTime);
-      const slotEnd = new Date(timeSlot.endTime);
+      const startTimeStr =
+        typeof timeSlot.startTime === "string" && !timeSlot.startTime.includes("T")
+          ? timeSlot.startTime
+          : convertFromUTC(timeSlot.startTime, adminTimezone);
 
-      if (isNaN(slotStart.getTime()) || isNaN(slotEnd.getTime())) {
-        continue;
-      }
+      const endTimeStr =
+        typeof timeSlot.endTime === "string" && !timeSlot.endTime.includes("T")
+          ? timeSlot.endTime
+          : convertFromUTC(timeSlot.endTime, adminTimezone);
 
-      const dayStart = new Date(startOfDay);
-      dayStart.setUTCHours(
-        slotStart.getUTCHours(),
-        slotStart.getUTCMinutes(),
-        0,
-        0,
-      );
-
-      const dayEnd = new Date(startOfDay);
-      dayEnd.setUTCHours(slotEnd.getUTCHours(), slotEnd.getUTCMinutes(), 0, 0);
+      const dayStart = convertToUTC(startTimeStr, adminTimezone, targetDate);
+      const dayEnd = convertToUTC(endTimeStr, adminTimezone, targetDate);
 
       let currentStart = new Date(dayStart);
 
