@@ -27,8 +27,8 @@ interface TimeSlot {
 interface DayScheduleGridProps {
   dayOfWeek: string;
   timeSlots: TimeSlot[];
-  onAddSlot: (timeSlot: Omit<TimeSlot, 'isEnabled'> & { isEnabled: boolean }) => Promise<void>;
-  onUpdateSlot: (index: number, timeSlot: TimeSlot) => Promise<void>;
+  onAddSlot: (timeSlot: Omit<TimeSlot, 'isEnabled'> & { isEnabled: boolean }) => Promise<boolean | void>;
+  onUpdateSlot: (index: number, timeSlot: TimeSlot) => Promise<boolean | void>;
   onRemoveSlot: (index: number) => Promise<void>;
   onToggleSlot: (index: number, isEnabled: boolean) => Promise<void>;
   isLoading: boolean;
@@ -47,22 +47,24 @@ export function DayScheduleGrid({
   const [editingSlot, setEditingSlot] = useState<{ index: number; slot: TimeSlot } | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
-  // In DayScheduleGrid.tsx, update the handleAddSlot function
-const handleAddSlot = async (data: TimeSlot) => {
-  // Ensure all required fields are present
-  const slotData = {
-    startTime: data.startTime,
-    endTime: data.endTime,
-    isEnabled: data.isEnabled !== undefined ? data.isEnabled : true,
+  const handleAddSlot = async (data: TimeSlot) => {
+    const slotData = {
+      startTime: data.startTime,
+      endTime: data.endTime,
+      isEnabled: data.isEnabled !== undefined ? data.isEnabled : true,
+    };
+    const success = await onAddSlot(slotData);
+    if (success !== false) {
+      setShowAddForm(false);
+    }
   };
-  await onAddSlot(slotData);
-  setShowAddForm(false);
-};
 
   const handleUpdateSlot = async (data: TimeSlot) => {
     if (editingSlot) {
-      await onUpdateSlot(editingSlot.index, data);
-      setEditingSlot(null);
+      const success = await onUpdateSlot(editingSlot.index, data);
+      if (success !== false) {
+        setEditingSlot(null);
+      }
     }
   };
 

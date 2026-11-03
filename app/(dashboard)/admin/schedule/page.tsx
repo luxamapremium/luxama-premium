@@ -71,19 +71,22 @@ export default function SchedulePage() {
     loadSchedules();
   }, []);
 
-  const handleAddSlot = async (dayOfWeek: string, timeSlot: TimeSlot) => {
+  const handleAddSlot = async (dayOfWeek: string, timeSlot: TimeSlot): Promise<boolean> => {
     setIsLoading(true);
     try {
       const result = await addTimeSlot(dayOfWeek, timeSlot);
       if (result.success) {
         toast.success("Time slot added successfully");
         await loadSchedules();
+        return true;
       } else {
         toast.error(result.error || "Failed to add time slot");
+        return false;
       }
     } catch (error) {
       console.error("Error adding slot:", error);
       toast.error("An unexpected error occurred");
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -93,19 +96,22 @@ export default function SchedulePage() {
     dayOfWeek: string,
     index: number,
     timeSlot: TimeSlot,
-  ) => {
+  ): Promise<boolean> => {
     setIsLoading(true);
     try {
       const result = await updateTimeSlot(dayOfWeek, index, timeSlot);
       if (result.success) {
         toast.success("Time slot updated successfully");
         await loadSchedules();
+        return true;
       } else {
         toast.error(result.error || "Failed to update time slot");
+        return false;
       }
     } catch (error) {
       console.error("Error updating slot:", error);
       toast.error("An unexpected error occurred");
+      return false;
     } finally {
       setIsLoading(false);
     }
