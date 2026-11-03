@@ -90,6 +90,7 @@ export async function getAdminSchedules() {
       adminId: schedule.adminId.toString(),
       dayOfWeek: schedule.dayOfWeek,
       timeSlots: (schedule.timeSlots || []).map((slot: any) => ({
+        _id: slot._id ? slot._id.toString() : undefined,
         startTime: convertFromUTC(slot.startTime, timezone),
         endTime: convertFromUTC(slot.endTime, timezone),
         isEnabled: slot.isEnabled ?? true,
@@ -228,7 +229,10 @@ export async function addTimeSlot(
 /* ==============================
     REMOVE TIME SLOT
 ============================== */
-export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
+export async function removeTimeSlot(
+  dayOfWeek: string,
+  slotIdOrIndex: string | number,
+) {
   try {
     const admin = await verifyAdmin();
     await connectDB();
@@ -246,12 +250,17 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
 
     const timeSlots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= timeSlots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? timeSlots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= timeSlots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
     const updated = [...timeSlots];
-    updated.splice(slotIndex, 1);
+    updated.splice(targetIndex, 1);
 
     if (updated.length === 0) {
       await Schedule.deleteOne({
@@ -290,7 +299,7 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
 ============================== */
 export async function updateTimeSlot(
   dayOfWeek: string,
-  slotIndex: number,
+  slotIdOrIndex: string | number,
   timeSlot: TimeSlotFormData,
 ) {
   try {
@@ -318,12 +327,17 @@ export async function updateTimeSlot(
 
     const slots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= slots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? slots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= slots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
     const updatedSlots = [...slots];
-    updatedSlots[slotIndex] = updatedSlot;
+    updatedSlots[targetIndex] = updatedSlot;
 
     const hasOverlap = checkForOverlap(updatedSlots);
     if (hasOverlap) {
@@ -363,7 +377,7 @@ export async function updateTimeSlot(
 ============================== */
 export async function toggleTimeSlotStatus(
   dayOfWeek: string,
-  slotIndex: number,
+  slotIdOrIndex: string | number,
   isEnabled: boolean,
 ) {
   try {
@@ -383,13 +397,18 @@ export async function toggleTimeSlotStatus(
 
     const slots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= slots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? slots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= slots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
     const updated = [...slots];
-    updated[slotIndex] = {
-      ...updated[slotIndex],
+    updated[targetIndex] = {
+      ...updated[targetIndex],
       isEnabled,
     };
 

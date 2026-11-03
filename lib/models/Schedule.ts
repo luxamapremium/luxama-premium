@@ -4,6 +4,7 @@ import { DAYS_OF_WEEK } from "../constants/days_of_week";
 export type DayOfWeek = (typeof DAYS_OF_WEEK)[number];
 
 export interface ITimeSlot {
+  _id?: mongoose.Types.ObjectId;
   startTime: Date;
   endTime: Date;
   isEnabled: boolean;
