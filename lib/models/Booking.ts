@@ -61,5 +61,11 @@ BookingSchema.index(
   },
 );
 
+// Optimize availability queries filtering by adminId, startTime range, and status
+BookingSchema.index(
+  { adminId: 1, startTime: 1, status: 1 },
+  { name: "booking_availability_idx" },
+);
+
 export const Booking =
   mongoose.models.Booking || mongoose.model<IBooking>("Booking", BookingSchema);
