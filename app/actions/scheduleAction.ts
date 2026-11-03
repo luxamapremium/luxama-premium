@@ -10,7 +10,10 @@ import {
   type ScheduleFormData,
   type TimeSlotFormData,
 } from "@/lib/schemas/schedule.schema";
+import { DAYS_OF_WEEK } from "@/lib/constants/days_of_week";
 import { z } from "zod";
+
+const dayOfWeekSchema = z.enum(DAYS_OF_WEEK);
 
 import { getAdminTimezone } from "./timezoneAction";
 import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
@@ -171,6 +174,7 @@ export async function addTimeSlot(
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
     const timezone = await getAdminTimezone();
     const validated = timeSlotSchema.parse(timeSlot);
 
@@ -182,7 +186,7 @@ export async function addTimeSlot(
 
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     });
 
     const currentSlots = schedule?.timeSlots || [];
@@ -194,7 +198,7 @@ export async function addTimeSlot(
     }
 
     const result = await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
+      { adminId: admin.id, dayOfWeek: validatedDay },
       { timeSlots: updatedSlots },
       { upsert: true, returnDocument: "after", runValidators: true },
     );
@@ -208,6 +212,12 @@ export async function addTimeSlot(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     console.error("Error adding slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid input",
+      };
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to add slot",
@@ -223,9 +233,11 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
+
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -244,11 +256,11 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
     if (updated.length === 0) {
       await Schedule.deleteOne({
         adminId: admin.id,
-        dayOfWeek,
+        dayOfWeek: validatedDay,
       });
     } else {
       await Schedule.findOneAndUpdate(
-        { adminId: admin.id, dayOfWeek },
+        { adminId: admin.id, dayOfWeek: validatedDay },
         { timeSlots: updated },
         { returnDocument: "after", runValidators: true },
       );
@@ -260,6 +272,12 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
   } catch (error) {
     if (isRedirectError(error)) throw error;
     console.error("Error removing slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid day of week",
+      };
+    }
     return {
       success: false,
       error: "Failed to remove slot",
@@ -279,6 +297,7 @@ export async function updateTimeSlot(
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
     const timezone = await getAdminTimezone();
     const validated = timeSlotSchema.parse(timeSlot);
 
@@ -290,7 +309,7 @@ export async function updateTimeSlot(
 
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -312,7 +331,7 @@ export async function updateTimeSlot(
     }
 
     const result = await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
+      { adminId: admin.id, dayOfWeek: validatedDay },
       { timeSlots: updatedSlots },
       { returnDocument: "after", runValidators: true },
     );
@@ -326,6 +345,12 @@ export async function updateTimeSlot(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     console.error("Error updating slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid input",
+      };
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update slot",
@@ -345,9 +370,11 @@ export async function toggleTimeSlotStatus(
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
+
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -367,7 +394,7 @@ export async function toggleTimeSlotStatus(
     };
 
     await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
+      { adminId: admin.id, dayOfWeek: validatedDay },
       { timeSlots: updated },
       { returnDocument: "after", runValidators: true },
     );
@@ -378,6 +405,12 @@ export async function toggleTimeSlotStatus(
   } catch (error) {
     if (isRedirectError(error)) throw error;
     console.error("Error toggling slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid day of week",
+      };
+    }
     return {
       success: false,
       error: "Failed to toggle slot",
