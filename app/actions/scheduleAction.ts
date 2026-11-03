@@ -200,7 +200,7 @@ export async function addTimeSlot(
 
     const result = await Schedule.findOneAndUpdate(
       { adminId: admin.id, dayOfWeek: validatedDay },
-      { timeSlots: updatedSlots },
+      { $push: { timeSlots: newSlot } },
       { upsert: true, returnDocument: "after", runValidators: true },
     );
 
@@ -259,20 +259,26 @@ export async function removeTimeSlot(
       return { success: false, error: "Invalid slot index or ID" };
     }
 
-    const updated = [...timeSlots];
-    updated.splice(targetIndex, 1);
+    const targetSlot = timeSlots[targetIndex];
+    const pullCondition = targetSlot?._id
+      ? { _id: targetSlot._id }
+      : {
+          startTime: targetSlot.startTime,
+          endTime: targetSlot.endTime,
+        };
 
-    if (updated.length === 0) {
+    const result = await Schedule.findOneAndUpdate(
+      { adminId: admin.id, dayOfWeek: validatedDay },
+      { $pull: { timeSlots: pullCondition } },
+      { returnDocument: "after", runValidators: true },
+    );
+
+    if (result && (!result.timeSlots || result.timeSlots.length === 0)) {
       await Schedule.deleteOne({
         adminId: admin.id,
         dayOfWeek: validatedDay,
+        timeSlots: { $size: 0 },
       });
-    } else {
-      await Schedule.findOneAndUpdate(
-        { adminId: admin.id, dayOfWeek: validatedDay },
-        { timeSlots: updated },
-        { returnDocument: "after", runValidators: true },
-      );
     }
 
     revalidatePath("/admin/schedule");
@@ -344,9 +350,37 @@ export async function updateTimeSlot(
       return { success: false, error: "Updated slot overlaps" };
     }
 
+    const targetSlot = slots[targetIndex];
+    let updateFilter: any;
+    let updateOperator: any;
+
+    if (targetSlot?._id) {
+      updateFilter = {
+        adminId: admin.id,
+        dayOfWeek: validatedDay,
+        "timeSlots._id": targetSlot._id,
+      };
+      updateOperator = {
+        $set: {
+          "timeSlots.$.startTime": updatedSlot.startTime,
+          "timeSlots.$.endTime": updatedSlot.endTime,
+          "timeSlots.$.isEnabled": updatedSlot.isEnabled,
+        },
+      };
+    } else {
+      updateFilter = { adminId: admin.id, dayOfWeek: validatedDay };
+      updateOperator = {
+        $set: {
+          [`timeSlots.${targetIndex}.startTime`]: updatedSlot.startTime,
+          [`timeSlots.${targetIndex}.endTime`]: updatedSlot.endTime,
+          [`timeSlots.${targetIndex}.isEnabled`]: updatedSlot.isEnabled,
+        },
+      };
+    }
+
     const result = await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek: validatedDay },
-      { timeSlots: updatedSlots },
+      updateFilter,
+      updateOperator,
       { returnDocument: "after", runValidators: true },
     );
 
@@ -406,15 +440,33 @@ export async function toggleTimeSlotStatus(
       return { success: false, error: "Invalid slot index or ID" };
     }
 
-    const updated = [...slots];
-    updated[targetIndex] = {
-      ...updated[targetIndex],
-      isEnabled,
-    };
+    const targetSlot = slots[targetIndex];
+    let updateFilter: any;
+    let updateOperator: any;
+
+    if (targetSlot?._id) {
+      updateFilter = {
+        adminId: admin.id,
+        dayOfWeek: validatedDay,
+        "timeSlots._id": targetSlot._id,
+      };
+      updateOperator = {
+        $set: {
+          "timeSlots.$.isEnabled": isEnabled,
+        },
+      };
+    } else {
+      updateFilter = { adminId: admin.id, dayOfWeek: validatedDay };
+      updateOperator = {
+        $set: {
+          [`timeSlots.${targetIndex}.isEnabled`]: isEnabled,
+        },
+      };
+    }
 
     await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek: validatedDay },
-      { timeSlots: updated },
+      updateFilter,
+      updateOperator,
       { returnDocument: "after", runValidators: true },
     );
 
