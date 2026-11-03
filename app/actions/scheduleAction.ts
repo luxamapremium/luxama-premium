@@ -14,6 +14,7 @@ import { z } from "zod";
 
 import { getAdminTimezone } from "./timezoneAction";
 import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 /* ==============================
     SERIALIZER
@@ -94,6 +95,7 @@ export async function getAdminSchedules() {
 
     return { success: true, data: formatted };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error fetching schedules:", error);
     return {
       success: false,
@@ -141,6 +143,7 @@ export async function upsertSchedule(data: ScheduleFormData) {
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error saving schedule:", error);
 
     if (error instanceof z.ZodError) {
@@ -203,6 +206,7 @@ export async function addTimeSlot(
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error adding slot:", error);
     return {
       success: false,
@@ -254,6 +258,7 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error removing slot:", error);
     return {
       success: false,
@@ -319,6 +324,7 @@ export async function updateTimeSlot(
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error updating slot:", error);
     return {
       success: false,
@@ -370,6 +376,7 @@ export async function toggleTimeSlotStatus(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error toggling slot:", error);
     return {
       success: false,
