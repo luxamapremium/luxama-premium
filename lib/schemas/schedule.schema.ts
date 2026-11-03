@@ -4,6 +4,11 @@ import { DAYS_OF_WEEK } from "@/lib/constants/days_of_week";
 // Time validation regex (24-hour format)
 export const TIME_REGEX = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 
+export const toMinutes = (time: string): number => {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+
 // Base time slot schema
 export const timeSlotSchema = z
   .object({
@@ -19,7 +24,7 @@ export const timeSlotSchema = z
   })
   .refine(
     (data) => {
-      return data.startTime < data.endTime;
+      return toMinutes(data.startTime) < toMinutes(data.endTime);
     },
     {
       message: "End time must be after start time",
