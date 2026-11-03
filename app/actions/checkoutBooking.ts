@@ -36,6 +36,19 @@ export async function createBookingCheckout({
   const event = await Event.findById(eventId);
   if (!event) throw new Error("Event not found");
 
+  const adminObjectId = new mongoose.Types.ObjectId(adminId);
+
+  // Concurrency check: prevent booking a slot that is already reserved or confirmed
+  const conflictingBooking = await Booking.findOne({
+    adminId: adminObjectId,
+    startTime: new Date(startTime),
+    status: { $in: ["confirmed", "pending"] },
+  }).lean();
+
+  if (conflictingBooking) {
+    throw new Error("This time slot is already booked or reserved.");
+  }
+
   // ─── FREE CONSULTATION PATH ───────────────────────────────
   if (event.isFree) {
     // Create Zoom meeting if video consultation

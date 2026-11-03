@@ -63,7 +63,27 @@ export async function POST(req: Request) {
     booking.paymentIntentId = session.payment_intent as string;
     booking.zoomJoinUrl = zoomJoinUrl;
     booking.zoomStartUrl = zoomStartUrl;
-    await booking.save();
+
+    try {
+      await booking.save();
+    } catch (saveError: any) {
+      if (saveError?.code === 11000) {
+        console.error("Duplicate confirmed booking detected in Stripe webhook (E11000):", {
+          bookingId,
+          adminId: booking.adminId,
+          startTime: booking.startTime,
+        });
+        booking.status = "conflict";
+        booking.paymentStatus = "paid";
+        await booking.save();
+        return NextResponse.json({
+          received: true,
+          status: "conflict",
+          message: "Double booking detected; flagged for admin resolution",
+        });
+      }
+      throw saveError;
+    }
 
     try {
       const db = client.db("auth_db");
