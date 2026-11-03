@@ -109,11 +109,14 @@ export default function EventDetails({ params }: Props) {
       try {
         setSlotsLoading(true);
         setSelectedSlot(null);
-        const dateString = date.toISOString().split("T");
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        const dateString = `${y}-${m}-${d}`;
         const slots = await getAvailableSlots(
           event.adminId,
           event._id,
-          dateString[0],
+          dateString,
         );
 
         setAvailableSlots(
