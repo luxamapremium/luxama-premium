@@ -74,7 +74,7 @@ const handleAddSlot = async (data: TimeSlot) => {
   };
 
   const formatTimeRange = (start: string, end: string) => {
-    return `${start} ${end}`;
+    return `${start} - ${end}`;
   };
 
   return (
