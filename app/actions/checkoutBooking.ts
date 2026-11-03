@@ -8,6 +8,7 @@ import { createZoomMeeting } from "@/lib/zoom";
 import { sendEmail } from "@/lib/email/sendEmail";
 import client from "@/lib/db-client";
 import { ObjectId } from "mongodb";
+import { verifyUser } from "@/lib/auth/check-auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -22,13 +23,15 @@ export async function createBookingCheckout({
 }: {
   eventId: string;
   adminId: string;
-  userId: string;
+  userId?: string;
   startTime: Date;
   endTime: Date;
   consultationType: "phone" | "video";
   phoneNumber?: string;
 }) {
   await connectDB();
+  const sessionUser = await verifyUser();
+  const effectiveUserId = sessionUser.id;
 
   const event = await Event.findById(eventId);
   if (!event) throw new Error("Event not found");
@@ -53,7 +56,7 @@ export async function createBookingCheckout({
     const booking = await Booking.create({
       eventId: new mongoose.Types.ObjectId(eventId),
       adminId: new mongoose.Types.ObjectId(adminId),
-      userId: new mongoose.Types.ObjectId(userId),
+      userId: new mongoose.Types.ObjectId(effectiveUserId),
       startTime,
       endTime,
       consultationType,
@@ -73,7 +76,7 @@ export async function createBookingCheckout({
       const userDetails = await db
         .collection("user")
         .findOne(
-          { _id: new ObjectId(userId) },
+          { _id: new ObjectId(effectiveUserId) },
           { projection: { name: 1, email: 1 } },
         );
 
@@ -187,7 +190,7 @@ export async function createBookingCheckout({
   const booking = await Booking.create({
     eventId: new mongoose.Types.ObjectId(eventId),
     adminId: new mongoose.Types.ObjectId(adminId),
-    userId: new mongoose.Types.ObjectId(userId),
+    userId: new mongoose.Types.ObjectId(effectiveUserId),
     startTime,
     endTime,
     consultationType,
