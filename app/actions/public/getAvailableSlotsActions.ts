@@ -19,8 +19,8 @@ interface TimeRange {
   end: Date;
 }
 
-// Cache for timezone (5 minutes TTL)
-let timezoneCache: { timezone: string; timestamp: number } | null = null;
+// Cache for timezone (5 minutes TTL), keyed by adminId
+const timezoneCache = new Map<string, { timezone: string; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
 export async function getAvailableSlots(
@@ -53,12 +53,13 @@ export async function getAvailableSlots(
 
     try {
       const now = Date.now();
+      const cached = timezoneCache.get(adminId);
 
-      if (timezoneCache && now - timezoneCache.timestamp < CACHE_TTL) {
-        adminTimezone = timezoneCache.timezone;
+      if (cached && now - cached.timestamp < CACHE_TTL) {
+        adminTimezone = cached.timezone;
       } else {
         adminTimezone = await getAdminTimezoneById(adminId);
-        timezoneCache = { timezone: adminTimezone, timestamp: now };
+        timezoneCache.set(adminId, { timezone: adminTimezone, timestamp: now });
       }
     } catch (error) {
       console.warn("Using default timezone UTC:", error);
