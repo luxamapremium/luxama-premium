@@ -123,7 +123,10 @@ export async function getAvailableDates(
       {
         adminId: adminObjectId,
         startTime: { $gte: startUTC, $lte: endUTC },
-        status: { $nin: ["cancelled", "rejected"] },
+        $or: [
+          { status: "confirmed" },
+          { status: "pending", expiresAt: { $gt: now } },
+        ],
       },
       { startTime: 1 },
     ).lean();

@@ -118,12 +118,21 @@ export async function getAvailableSlots(
       return [];
     }
 
-    // Get bookings
+    // Min notice & current time
+    const now = new Date();
+    const minStartTime = new Date(
+      now.getTime() + minimumNoticeMinutes * 60 * 1000,
+    );
+
+    // Get bookings (confirmed or active pending holds)
     const existingBookings = await Booking.find(
       {
         adminId: adminObjectId,
         startTime: { $gte: startOfDay, $lte: endOfDay },
-        status: { $in: ["pending", "confirmed"] },
+        $or: [
+          { status: "confirmed" },
+          { status: "pending", expiresAt: { $gt: now } },
+        ],
       },
       {
         startTime: 1,
@@ -131,12 +140,6 @@ export async function getAvailableSlots(
         _id: 0,
       },
     ).lean();
-
-    // Min notice
-    const now = new Date();
-    const minStartTime = new Date(
-      now.getTime() + minimumNoticeMinutes * 60 * 1000,
-    );
 
     // Generate slots
     const allPossibleSlots: TimeRange[] = [];

@@ -107,7 +107,7 @@ export default function ProfessionalServices() {
                 onClick={() => router.push(service.url)}
                 className={cn(
                   "group relative flex flex-col items-center text-center justify-center p-7 sm:p-8 rounded-2xl sm:rounded-3xl border border-border/70 bg-card text-card-foreground shadow transition-all duration-300 ease-out cursor-pointer",
-                  "hover:shadow-luxury hover:border-gold-500/40 hover:-translate-y-2",
+                  "hover:shadow-sm hover:border-gold-500/40 hover:-translate-y-0.5",
                   "active:scale-[0.98]"
                 )}
               >

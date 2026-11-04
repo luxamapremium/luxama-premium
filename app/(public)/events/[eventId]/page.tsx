@@ -172,8 +172,10 @@ export default function EventDetails({ params }: Props) {
       } else if (res?.checkoutUrl) {
         window.location.href = res.checkoutUrl;
       }
-    } catch (err) {
-      setError("Payment initialization failed. Please try again.");
+    } catch (err: any) {
+      setError(
+        err?.message || "Payment initialization failed. Please try again.",
+      );
     } finally {
       setBookingLoading(false);
     }

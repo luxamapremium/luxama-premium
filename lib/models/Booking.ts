@@ -52,11 +52,11 @@ const BookingSchema = new Schema<IBooking>(
   { timestamps: true },
 );
 
-// expire after 5 minutes
+// expire after 30 minutes
 BookingSchema.index(
   { createdAt: 1 },
   {
-    expireAfterSeconds: 300,
+    expireAfterSeconds: 1800,
     partialFilterExpression: { status: "pending" },
   },
 );
@@ -67,12 +67,12 @@ BookingSchema.index(
   { name: "booking_availability_idx" },
 );
 
-// Prevent double-booking for confirmed consultations
+// Prevent double-booking for active holds (pending) and confirmed consultations
 BookingSchema.index(
   { adminId: 1, startTime: 1 },
   {
     unique: true,
-    partialFilterExpression: { status: "confirmed" },
+    partialFilterExpression: { status: { $in: ["confirmed", "pending"] } },
     name: "unique_confirmed_slot_per_admin",
   },
 );

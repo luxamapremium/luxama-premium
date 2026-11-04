@@ -17,7 +17,7 @@ TestBookingSchema.index(
   { adminId: 1, startTime: 1 },
   {
     unique: true,
-    partialFilterExpression: { status: "confirmed" },
+    partialFilterExpression: { status: { $in: ["confirmed", "pending"] } },
     name: "unique_confirmed_slot_per_admin",
   }
 );
@@ -55,7 +55,9 @@ test("BUG-08: Partial unique index unique_confirmed_slot_per_admin is configured
 
   assert.ok(found, "unique_confirmed_slot_per_admin index must be defined");
   assert.equal(found[1].unique, true);
-  assert.deepEqual(found[1].partialFilterExpression, { status: "confirmed" });
+  assert.deepEqual(found[1].partialFilterExpression, {
+    status: { $in: ["confirmed", "pending"] },
+  });
 });
 
 test("BUG-08: Application-level conflict check blocks double booking on pending/confirmed slot", () => {
