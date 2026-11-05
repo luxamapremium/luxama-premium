@@ -7,7 +7,7 @@ export interface IBooking extends Document {
   userId: mongoose.Types.ObjectId;
   startTime: Date;
   endTime: Date;
-  status: "pending" | "confirmed" | "expired";
+  status: "pending" | "confirmed" | "expired" | "conflict" | "cancelled";
   consultationType: "phone" | "video";
   phoneNumber?: string;
   zoomJoinUrl?: string;
@@ -29,7 +29,7 @@ const BookingSchema = new Schema<IBooking>(
     endTime: { type: Date, required: true },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "expired"],
+      enum: ["pending", "confirmed", "expired", "conflict", "cancelled"],
       default: "pending",
     },
     consultationType: {
@@ -52,12 +52,28 @@ const BookingSchema = new Schema<IBooking>(
   { timestamps: true },
 );
 
-// expire after 5 minutes
+// expire after 30 minutes
 BookingSchema.index(
   { createdAt: 1 },
   {
-    expireAfterSeconds: 300,
+    expireAfterSeconds: 1800,
     partialFilterExpression: { status: "pending" },
+  },
+);
+
+// Optimize availability queries filtering by adminId, startTime range, and status
+BookingSchema.index(
+  { adminId: 1, startTime: 1, status: 1 },
+  { name: "booking_availability_idx" },
+);
+
+// Prevent double-booking for active holds (pending) and confirmed consultations
+BookingSchema.index(
+  { adminId: 1, startTime: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: { $in: ["confirmed", "pending"] } },
+    name: "unique_confirmed_slot_per_admin",
   },
 );
 

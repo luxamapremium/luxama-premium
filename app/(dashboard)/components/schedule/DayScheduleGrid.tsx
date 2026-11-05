@@ -19,6 +19,7 @@ import {
 import { TimeSlotForm } from "./TimeSlotForm";
 
 interface TimeSlot {
+  _id?: string;
   startTime: string;
   endTime: string;
   isEnabled: boolean;
@@ -27,10 +28,10 @@ interface TimeSlot {
 interface DayScheduleGridProps {
   dayOfWeek: string;
   timeSlots: TimeSlot[];
-  onAddSlot: (timeSlot: Omit<TimeSlot, 'isEnabled'> & { isEnabled: boolean }) => Promise<void>;
-  onUpdateSlot: (index: number, timeSlot: TimeSlot) => Promise<void>;
-  onRemoveSlot: (index: number) => Promise<void>;
-  onToggleSlot: (index: number, isEnabled: boolean) => Promise<void>;
+  onAddSlot: (timeSlot: Omit<TimeSlot, 'isEnabled'> & { isEnabled: boolean }) => Promise<boolean | void>;
+  onUpdateSlot: (slotIdOrIndex: string | number, timeSlot: TimeSlot) => Promise<boolean | void>;
+  onRemoveSlot: (slotIdOrIndex: string | number) => Promise<void>;
+  onToggleSlot: (slotIdOrIndex: string | number, isEnabled: boolean) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -44,37 +45,39 @@ export function DayScheduleGrid({
   isLoading,
 }: DayScheduleGridProps) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingSlot, setEditingSlot] = useState<{ index: number; slot: TimeSlot } | null>(null);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [editingSlot, setEditingSlot] = useState<{ idOrIndex: string | number; slot: TimeSlot } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<string | number | null>(null);
 
-  // In DayScheduleGrid.tsx, update the handleAddSlot function
-const handleAddSlot = async (data: TimeSlot) => {
-  // Ensure all required fields are present
-  const slotData = {
-    startTime: data.startTime,
-    endTime: data.endTime,
-    isEnabled: data.isEnabled !== undefined ? data.isEnabled : true,
+  const handleAddSlot = async (data: TimeSlot) => {
+    const slotData = {
+      startTime: data.startTime,
+      endTime: data.endTime,
+      isEnabled: data.isEnabled !== undefined ? data.isEnabled : true,
+    };
+    const success = await onAddSlot(slotData);
+    if (success !== false) {
+      setShowAddForm(false);
+    }
   };
-  await onAddSlot(slotData);
-  setShowAddForm(false);
-};
 
   const handleUpdateSlot = async (data: TimeSlot) => {
     if (editingSlot) {
-      await onUpdateSlot(editingSlot.index, data);
-      setEditingSlot(null);
+      const success = await onUpdateSlot(editingSlot.idOrIndex, data);
+      if (success !== false) {
+        setEditingSlot(null);
+      }
     }
   };
 
   const handleDelete = async () => {
-    if (deleteIndex !== null) {
-      await onRemoveSlot(deleteIndex);
-      setDeleteIndex(null);
+    if (deleteTarget !== null) {
+      await onRemoveSlot(deleteTarget);
+      setDeleteTarget(null);
     }
   };
 
   const formatTimeRange = (start: string, end: string) => {
-    return `${start} ${end}`;
+    return `${start} - ${end}`;
   };
 
   return (
@@ -102,63 +105,66 @@ const handleAddSlot = async (data: TimeSlot) => {
             </div>
           ) : (
             <div className="space-y-2">
-              {timeSlots.map((slot, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center justify-between p-3 rounded-lg border border-border ${
-                    !slot.isEnabled ? "bg-muted/50" : "bg-card"
-                  }`}
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <span className={`font-medium ${!slot.isEnabled ? "line-through text-muted-foreground" : "text-navy-900"}`}>
-                        {formatTimeRange(slot.startTime, slot.endTime)}
-                      </span>
-                      {slot.isEnabled ? (
-                        <Badge variant="default" className="bg-navy-900 text-gold-400 border border-gold-500/20 font-sans">
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="font-sans">Disabled</Badge>
-                      )}
+              {timeSlots.map((slot, index) => {
+                const targetKey = slot._id ?? index;
+                return (
+                  <div
+                    key={targetKey}
+                    className={`flex items-center justify-between p-3 rounded-lg border border-border ${
+                      !slot.isEnabled ? "bg-muted/50" : "bg-card"
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <span className={`font-medium ${!slot.isEnabled ? "line-through text-muted-foreground" : "text-navy-900"}`}>
+                          {formatTimeRange(slot.startTime, slot.endTime)}
+                        </span>
+                        {slot.isEnabled ? (
+                          <Badge variant="default" className="bg-navy-900 text-gold-400 border border-gold-500/20 font-sans">
+                            Active
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="font-sans">Disabled</Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onToggleSlot(targetKey, !slot.isEnabled)}
+                        disabled={isLoading}
+                        title={slot.isEnabled ? "Disable" : "Enable"}
+                      >
+                        {slot.isEnabled ? (
+                          <PowerOff className="h-4 w-4" />
+                        ) : (
+                          <Power className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingSlot({ idOrIndex: targetKey, slot })}
+                        disabled={isLoading}
+                        title="Edit"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setDeleteTarget(targetKey)}
+                        disabled={isLoading}
+                        title="Remove"
+                        className="text-destructive hover:text-destructive/80"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onToggleSlot(index, !slot.isEnabled)}
-                      disabled={isLoading}
-                      title={slot.isEnabled ? "Disable" : "Enable"}
-                    >
-                      {slot.isEnabled ? (
-                        <PowerOff className="h-4 w-4" />
-                      ) : (
-                        <Power className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingSlot({ index, slot })}
-                      disabled={isLoading}
-                      title="Edit"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteIndex(index)}
-                      disabled={isLoading}
-                      title="Remove"
-                      className="text-destructive hover:text-destructive/80"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         
@@ -222,7 +228,7 @@ const handleAddSlot = async (data: TimeSlot) => {
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteIndex !== null} onOpenChange={() => setDeleteIndex(null)}>
+      <AlertDialog open={deleteTarget !== null} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent className="font-sans">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-sans text-navy-900">Remove Time Slot</AlertDialogTitle>

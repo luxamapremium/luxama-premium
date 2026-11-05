@@ -3,7 +3,7 @@
 import connectDB from "@/lib/db";
 import { Event } from "@/lib/models/Event";
 import mongoose from "mongoose";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 
 // Get events by adminId
@@ -85,7 +85,7 @@ export async function getEventById(eventId: string) {
     }
 
     // 2. Query auth_db using the native client for the host's role
-    const db = client.db("auth_db");
+    const db = getAuthDb();
     const adminUser = await db
       .collection("user")
       .findOne(

@@ -16,6 +16,7 @@ import { DAYS_OF_WEEK } from "@/lib/constants/days_of_week";
 import { TimezoneForm } from "../../components/timezone/TimezoneForm";
 
 interface TimeSlot {
+  _id?: string;
   startTime: string;
   endTime: string;
   isEnabled: boolean;
@@ -48,6 +49,7 @@ export default function SchedulePage() {
             _id: schedule._id,
             dayOfWeek: schedule.dayOfWeek,
             timeSlots: timeSlots.map((slot: any) => ({
+              _id: slot._id,
               startTime: slot.startTime,
               endTime: slot.endTime,
               isEnabled: slot.isEnabled ?? true,
@@ -71,19 +73,22 @@ export default function SchedulePage() {
     loadSchedules();
   }, []);
 
-  const handleAddSlot = async (dayOfWeek: string, timeSlot: TimeSlot) => {
+  const handleAddSlot = async (dayOfWeek: string, timeSlot: TimeSlot): Promise<boolean> => {
     setIsLoading(true);
     try {
       const result = await addTimeSlot(dayOfWeek, timeSlot);
       if (result.success) {
         toast.success("Time slot added successfully");
         await loadSchedules();
+        return true;
       } else {
         toast.error(result.error || "Failed to add time slot");
+        return false;
       }
     } catch (error) {
       console.error("Error adding slot:", error);
       toast.error("An unexpected error occurred");
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -91,30 +96,33 @@ export default function SchedulePage() {
 
   const handleUpdateSlot = async (
     dayOfWeek: string,
-    index: number,
+    slotIdOrIndex: string | number,
     timeSlot: TimeSlot,
-  ) => {
+  ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const result = await updateTimeSlot(dayOfWeek, index, timeSlot);
+      const result = await updateTimeSlot(dayOfWeek, slotIdOrIndex, timeSlot);
       if (result.success) {
         toast.success("Time slot updated successfully");
         await loadSchedules();
+        return true;
       } else {
         toast.error(result.error || "Failed to update time slot");
+        return false;
       }
     } catch (error) {
       console.error("Error updating slot:", error);
       toast.error("An unexpected error occurred");
+      return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRemoveSlot = async (dayOfWeek: string, index: number) => {
+  const handleRemoveSlot = async (dayOfWeek: string, slotIdOrIndex: string | number) => {
     setIsLoading(true);
     try {
-      const result = await removeTimeSlot(dayOfWeek, index);
+      const result = await removeTimeSlot(dayOfWeek, slotIdOrIndex);
       if (result.success) {
         toast.success("Time slot removed successfully");
         await loadSchedules();
@@ -131,12 +139,12 @@ export default function SchedulePage() {
 
   const handleToggleSlot = async (
     dayOfWeek: string,
-    index: number,
+    slotIdOrIndex: string | number,
     isEnabled: boolean,
   ) => {
     setIsLoading(true);
     try {
-      const result = await toggleTimeSlotStatus(dayOfWeek, index, isEnabled);
+      const result = await toggleTimeSlotStatus(dayOfWeek, slotIdOrIndex, isEnabled);
       if (result.success) {
         toast.success(
           `Time slot ${isEnabled ? "enabled" : "disabled"} successfully`,
@@ -184,10 +192,10 @@ export default function SchedulePage() {
               dayOfWeek={day}
               timeSlots={timeSlots}
               onAddSlot={(slot) => handleAddSlot(day, slot)}
-              onUpdateSlot={(index, slot) => handleUpdateSlot(day, index, slot)}
-              onRemoveSlot={(index) => handleRemoveSlot(day, index)}
-              onToggleSlot={(index, isEnabled) =>
-                handleToggleSlot(day, index, isEnabled)
+              onUpdateSlot={(slotIdOrIndex, slot) => handleUpdateSlot(day, slotIdOrIndex, slot)}
+              onRemoveSlot={(slotIdOrIndex) => handleRemoveSlot(day, slotIdOrIndex)}
+              onToggleSlot={(slotIdOrIndex, isEnabled) =>
+                handleToggleSlot(day, slotIdOrIndex, isEnabled)
               }
               isLoading={isLoading}
             />

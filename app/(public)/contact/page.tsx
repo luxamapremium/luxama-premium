@@ -25,13 +25,13 @@ export default function Contact() {
   }
 
   const contactDetails = [
-    {
-      icon: MapPin,
-      label: "Visit Our Office",
-      value: "2331 E Irlo Bronson Memorial Hwy, Kissimmee, FL 34744",
-      href: "https://maps.google.com/?q=2331+E+Irlo+Bronson+Memorial+Hwy+Kissimmee+FL+34744",
-      hint: "Appointments welcome, or stop by our Kissimmee office",
-    },
+    // {
+    //   icon: MapPin,
+    //   label: "Visit Our Office",
+    //   value: "2331 E Irlo Bronson Memorial Hwy, Kissimmee, FL 34744",
+    //   href: "https://maps.google.com/?q=2331+E+Irlo+Bronson+Memorial+Hwy+Kissimmee+FL+34744",
+    //   hint: "Appointments welcome, or stop by our Kissimmee office",
+    // },
     {
       icon: Clock,
       label: "Working Hours",
@@ -73,8 +73,8 @@ export default function Contact() {
                   const wrapperProps = item.href
                     ? {
                         href: item.href,
-                        target: item.href.startsWith("http") ? "_blank" : undefined,
-                        rel: item.href.startsWith("http") ? "noopener noreferrer" : undefined,
+                        // target: item.href.startsWith("http") ? "_blank" : undefined,
+                        // rel: item.href.startsWith("http") ? "noopener noreferrer" : undefined,
                       }
                     : {};
 

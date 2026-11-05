@@ -6,8 +6,9 @@ import { Event } from "@/lib/models/Event";
 import mongoose from "mongoose";
 import { createZoomMeeting } from "@/lib/zoom";
 import { sendEmail } from "@/lib/email/sendEmail";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
+import { verifyUser } from "@/lib/auth/check-auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -22,19 +23,64 @@ export async function createBookingCheckout({
 }: {
   eventId: string;
   adminId: string;
-  userId: string;
+  userId?: string;
   startTime: Date;
   endTime: Date;
   consultationType: "phone" | "video";
   phoneNumber?: string;
 }) {
   await connectDB();
+  const sessionUser = await verifyUser();
+  const effectiveUserId = sessionUser.id;
 
   const event = await Event.findById(eventId);
   if (!event) throw new Error("Event not found");
 
+  const adminObjectId = new mongoose.Types.ObjectId(adminId);
+  const slotStartTime = new Date(startTime);
+
+  // 1. Release expired pending holds for this slot so they don't block availability or unique index
+  const now = new Date();
+  await Booking.updateMany(
+    {
+      adminId: adminObjectId,
+      startTime: slotStartTime,
+      status: "pending",
+      expiresAt: { $lte: now },
+    },
+    { $set: { status: "expired" } },
+  );
+
+  // 2. Concurrency check: check if slot is actively booked or held
+  const activeBooking = await Booking.findOne({
+    adminId: adminObjectId,
+    startTime: slotStartTime,
+    $or: [
+      { status: "confirmed" },
+      { status: "pending", expiresAt: { $gt: now } },
+    ],
+  });
+
+  if (activeBooking) {
+    if (activeBooking.status === "confirmed") {
+      throw new Error("This time slot is already booked or reserved.");
+    }
+    // If pending hold belongs to another user, block checkout
+    if (activeBooking.userId.toString() !== effectiveUserId) {
+      throw new Error("This time slot was just taken, please choose another one.");
+    }
+  }
+
   // ─── FREE CONSULTATION PATH ───────────────────────────────
   if (event.isFree) {
+    // If current user previously had a pending hold for this slot, remove it before confirming
+    await Booking.deleteMany({
+      adminId: adminObjectId,
+      startTime: slotStartTime,
+      userId: new mongoose.Types.ObjectId(effectiveUserId),
+      status: "pending",
+    });
+
     // Create Zoom meeting if video consultation
     let zoomJoinUrl: string | null = null;
     let zoomStartUrl: string | null = null;
@@ -50,30 +96,38 @@ export async function createBookingCheckout({
     }
 
     // Create booking as immediately confirmed — no Stripe, no expiry
-    const booking = await Booking.create({
-      eventId: new mongoose.Types.ObjectId(eventId),
-      adminId: new mongoose.Types.ObjectId(adminId),
-      userId: new mongoose.Types.ObjectId(userId),
-      startTime,
-      endTime,
-      consultationType,
-      phoneNumber: consultationType === "phone" ? phoneNumber : undefined,
-      status: "confirmed",
-      paymentStatus: "free",
-      zoomJoinUrl,
-      zoomStartUrl,
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-    });
+    let booking;
+    try {
+      booking = await Booking.create({
+        eventId: new mongoose.Types.ObjectId(eventId),
+        adminId: new mongoose.Types.ObjectId(adminId),
+        userId: new mongoose.Types.ObjectId(effectiveUserId),
+        startTime,
+        endTime,
+        consultationType,
+        phoneNumber: consultationType === "phone" ? phoneNumber : undefined,
+        status: "confirmed",
+        paymentStatus: "free",
+        zoomJoinUrl,
+        zoomStartUrl,
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      });
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        throw new Error("This time slot was just taken, please choose another one.");
+      }
+      throw err;
+    }
 
     const bookingId = booking._id.toString();
 
     try {
-      const db = client.db("auth_db");
+      const db = getAuthDb();
 
       const userDetails = await db
         .collection("user")
         .findOne(
-          { _id: new ObjectId(userId) },
+          { _id: new ObjectId(effectiveUserId) },
           { projection: { name: 1, email: 1 } },
         );
 
@@ -183,40 +237,80 @@ export async function createBookingCheckout({
     };
   }
 
-  // ─── PAID CONSULTATION PATH (existing logic) ──────────────
-  const booking = await Booking.create({
-    eventId: new mongoose.Types.ObjectId(eventId),
-    adminId: new mongoose.Types.ObjectId(adminId),
-    userId: new mongoose.Types.ObjectId(userId),
-    startTime,
-    endTime,
-    consultationType,
-    phoneNumber: consultationType === "phone" ? phoneNumber : undefined,
+  // ─── PAID CONSULTATION PATH ──────────────────────────────
+  // Pending hold duration: 31 minutes (aligns with Stripe checkout minimum 30 minutes with buffer)
+  const HOLD_DURATION_MS = 31 * 60 * 1000;
+  const holdExpiresAt = new Date(Date.now() + HOLD_DURATION_MS);
 
-    status: "pending",
-    paymentStatus: "unpaid",
+  let booking: any;
 
-    expiresAt: new Date(Date.now() + 15 * 60 * 1000),
-  });
+  // Same user retrying: if the same user already has an active hold for this slot, resume/replace it
+  if (
+    activeBooking &&
+    activeBooking.status === "pending" &&
+    activeBooking.userId.toString() === effectiveUserId
+  ) {
+    activeBooking.eventId = new mongoose.Types.ObjectId(eventId);
+    activeBooking.consultationType = consultationType;
+    activeBooking.phoneNumber =
+      consultationType === "phone" ? phoneNumber : undefined;
+    activeBooking.expiresAt = holdExpiresAt;
+    activeBooking.paymentStatus = "unpaid";
+    await activeBooking.save();
+    booking = activeBooking;
+  } else {
+    // Atomically create the pending hold (enforced by DB unique index on adminId + startTime)
+    try {
+      booking = await Booking.create({
+        eventId: new mongoose.Types.ObjectId(eventId),
+        adminId: new mongoose.Types.ObjectId(adminId),
+        userId: new mongoose.Types.ObjectId(effectiveUserId),
+        startTime,
+        endTime,
+        consultationType,
+        phoneNumber: consultationType === "phone" ? phoneNumber : undefined,
+        status: "pending",
+        paymentStatus: "unpaid",
+        expiresAt: holdExpiresAt,
+      });
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        throw new Error(
+          "This time slot was just taken, please choose another one.",
+        );
+      }
+      throw err;
+    }
+  }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          unit_amount: event.price * 100,
-          product_data: { name: event.name },
+  // Create Stripe Checkout Session expiring at the hold expiry (minimum 30 minutes in the future)
+  const stripeExpiresAt = Math.floor(holdExpiresAt.getTime() / 1000);
+  let session: Stripe.Checkout.Session;
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      expires_at: stripeExpiresAt,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            unit_amount: event.price * 100,
+            product_data: { name: event.name },
+          },
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/booking/success?id=${booking._id}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/booking/cancel`,
+      metadata: {
+        bookingId: booking._id.toString(),
       },
-    ],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/booking/success?id=${booking._id}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/booking/cancel`,
-    metadata: {
-      bookingId: booking._id.toString(),
-    },
-  });
+    });
+  } catch (stripeError) {
+    // If Stripe creation fails, release hold immediately so slot is not blocked
+    await Booking.findByIdAndDelete(booking._id);
+    throw stripeError;
+  }
 
   booking.stripeSessionId = session.id;
   await booking.save();

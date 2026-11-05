@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 import { Schedule } from "@/lib/models/Schedule";
 import { Booking } from "@/lib/models/Booking";
 import { getAdminTimezoneById } from "@/app/actions/timezoneAction";
+import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
 
 interface AvailableDate {
   date: string;
@@ -122,7 +123,10 @@ export async function getAvailableDates(
       {
         adminId: adminObjectId,
         startTime: { $gte: startUTC, $lte: endUTC },
-        status: { $nin: ["cancelled", "rejected"] },
+        $or: [
+          { status: "confirmed" },
+          { status: "pending", expiresAt: { $gt: now } },
+        ],
       },
       { startTime: 1 },
     ).lean();
@@ -166,18 +170,15 @@ export async function getAvailableDates(
 
       let availableCount = 0;
 
+      const targetDate = new Date(`${dateStr}T12:00:00.000Z`);
+
       for (const slot of enabledSlots) {
-        const slotStart = new Date(slot.startTime);
-        if (isNaN(slotStart.getTime())) continue;
+        const timeHHMM =
+          typeof slot.startTime === "string" && !slot.startTime.includes("T")
+            ? slot.startTime
+            : convertFromUTC(slot.startTime, adminTimezone);
 
-        const slotUTC = new Date(Date.UTC(y, m - 1, d));
-        slotUTC.setUTCHours(
-          slotStart.getUTCHours(),
-          slotStart.getUTCMinutes(),
-          0,
-          0,
-        );
-
+        const slotUTC = convertToUTC(timeHHMM, adminTimezone, targetDate);
         const timestamp = slotUTC.getTime();
         const booked = bookingsForDate.get(timestamp) || 0;
 

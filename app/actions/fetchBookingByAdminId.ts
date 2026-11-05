@@ -5,7 +5,7 @@ import { Booking } from "@/lib/models/Booking";
 import { Event } from "@/lib/models/Event";
 import { verifyAdmin } from "@/lib/auth/check-auth";
 import { Types } from "mongoose";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 
 export async function fetchBookingByAdminIdAction(page = 1, limit = 6) {
@@ -55,7 +55,7 @@ export async function fetchBookingByAdminIdAction(page = 1, limit = 6) {
 
     // Fetch user details (the clients) from auth_db
     const userIds = allFetched.map((b: any) => new ObjectId(b.userId));
-    const db = client.db("auth_db");
+    const db = getAuthDb();
     const users = await db
       .collection("user")
       .find({ _id: { $in: userIds } }, { projection: { name: 1, email: 1 } })

@@ -4,8 +4,9 @@ import { DAYS_OF_WEEK } from "../constants/days_of_week";
 export type DayOfWeek = (typeof DAYS_OF_WEEK)[number];
 
 export interface ITimeSlot {
-  startTime: Date;
-  endTime: Date;
+  _id?: mongoose.Types.ObjectId;
+  startTime: string;
+  endTime: string;
   isEnabled: boolean;
 }
 
@@ -17,11 +18,11 @@ export interface ISchedule extends Document {
 
 const TimeSlotSchema = new Schema<ITimeSlot>({
   startTime: {
-    type: Date,
+    type: String,
     required: true,
   },
   endTime: {
-    type: Date,
+    type: String,
     required: true,
   },
   isEnabled: { type: Boolean, default: true },

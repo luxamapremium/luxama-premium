@@ -5,7 +5,7 @@ import { Booking } from "@/lib/models/Booking";
 import { Event } from "@/lib/models/Event";
 import { verifyUser } from "@/lib/auth/check-auth";
 import { Types } from "mongoose";
-import client from "@/lib/db-client";
+import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
 
 export async function fetchBookingByUserIdAction() {
@@ -31,7 +31,7 @@ export async function fetchBookingByUserIdAction() {
     const adminIds = bookings.map((b: any) => new ObjectId(b.adminId));
 
     // Query the auth_db user collection for admin details
-    const db = client.db("auth_db");
+    const db = getAuthDb();
     const admins = await db
       .collection("user")
       .find({ _id: { $in: adminIds } }, { projection: { name: 1, email: 1 } })

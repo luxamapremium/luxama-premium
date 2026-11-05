@@ -10,10 +10,14 @@ import {
   type ScheduleFormData,
   type TimeSlotFormData,
 } from "@/lib/schemas/schedule.schema";
+import { DAYS_OF_WEEK } from "@/lib/constants/days_of_week";
 import { z } from "zod";
+
+const dayOfWeekSchema = z.enum(DAYS_OF_WEEK);
 
 import { getAdminTimezone } from "./timezoneAction";
 import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 /* ==============================
     SERIALIZER
@@ -50,15 +54,30 @@ function serializeDocument(doc: any): any {
 /* ==============================
     OVERLAP CHECK
 ============================== */
+function parseMinutes(val: string | Date): number {
+  if (typeof val === "string") {
+    if (val.includes(":") && !val.includes("T")) {
+      const [h, m] = val.split(":").map(Number);
+      return h * 60 + m;
+    }
+    const d = new Date(val);
+    return d.getUTCHours() * 60 + d.getUTCMinutes();
+  }
+  if (val instanceof Date) {
+    return val.getUTCHours() * 60 + val.getUTCMinutes();
+  }
+  return 0;
+}
+
 function checkForOverlap(timeSlots: any[]): boolean {
   if (!timeSlots || timeSlots.length <= 1) return false;
 
   const sorted = [...timeSlots].sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    (a, b) => parseMinutes(a.startTime) - parseMinutes(b.startTime),
   );
 
   for (let i = 0; i < sorted.length - 1; i++) {
-    if (new Date(sorted[i].endTime) > new Date(sorted[i + 1].startTime)) {
+    if (parseMinutes(sorted[i].endTime) > parseMinutes(sorted[i + 1].startTime)) {
       return true;
     }
   }
@@ -86,14 +105,22 @@ export async function getAdminSchedules() {
       adminId: schedule.adminId.toString(),
       dayOfWeek: schedule.dayOfWeek,
       timeSlots: (schedule.timeSlots || []).map((slot: any) => ({
-        startTime: convertFromUTC(slot.startTime, timezone),
-        endTime: convertFromUTC(slot.endTime, timezone),
+        _id: slot._id ? slot._id.toString() : undefined,
+        startTime:
+          typeof slot.startTime === "string" && !slot.startTime.includes("T")
+            ? slot.startTime
+            : convertFromUTC(slot.startTime, timezone),
+        endTime:
+          typeof slot.endTime === "string" && !slot.endTime.includes("T")
+            ? slot.endTime
+            : convertFromUTC(slot.endTime, timezone),
         isEnabled: slot.isEnabled ?? true,
       })),
     }));
 
     return { success: true, data: formatted };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error fetching schedules:", error);
     return {
       success: false,
@@ -110,12 +137,11 @@ export async function upsertSchedule(data: ScheduleFormData) {
     const admin = await verifyAdmin();
     await connectDB();
 
-    const timezone = await getAdminTimezone();
     const validatedData = scheduleSchema.parse(data);
 
     const convertedSlots = validatedData.timeSlots.map((slot) => ({
-      startTime: convertToUTC(slot.startTime, timezone),
-      endTime: convertToUTC(slot.endTime, timezone),
+      startTime: slot.startTime,
+      endTime: slot.endTime,
       isEnabled: slot.isEnabled ?? true,
     }));
 
@@ -141,6 +167,7 @@ export async function upsertSchedule(data: ScheduleFormData) {
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error saving schedule:", error);
 
     if (error instanceof z.ZodError) {
@@ -168,18 +195,18 @@ export async function addTimeSlot(
     const admin = await verifyAdmin();
     await connectDB();
 
-    const timezone = await getAdminTimezone();
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
     const validated = timeSlotSchema.parse(timeSlot);
 
     const newSlot = {
-      startTime: convertToUTC(validated.startTime, timezone),
-      endTime: convertToUTC(validated.endTime, timezone),
+      startTime: validated.startTime,
+      endTime: validated.endTime,
       isEnabled: validated.isEnabled ?? true,
     };
 
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     });
 
     const currentSlots = schedule?.timeSlots || [];
@@ -191,8 +218,8 @@ export async function addTimeSlot(
     }
 
     const result = await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
-      { timeSlots: updatedSlots },
+      { adminId: admin.id, dayOfWeek: validatedDay },
+      { $push: { timeSlots: newSlot } },
       { upsert: true, returnDocument: "after", runValidators: true },
     );
 
@@ -203,7 +230,14 @@ export async function addTimeSlot(
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error adding slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid input",
+      };
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to add slot",
@@ -214,14 +248,19 @@ export async function addTimeSlot(
 /* ==============================
     REMOVE TIME SLOT
 ============================== */
-export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
+export async function removeTimeSlot(
+  dayOfWeek: string,
+  slotIdOrIndex: string | number,
+) {
   try {
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
+
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -230,31 +269,49 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
 
     const timeSlots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= timeSlots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? timeSlots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= timeSlots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
-    const updated = [...timeSlots];
-    updated.splice(slotIndex, 1);
+    const targetSlot = timeSlots[targetIndex];
+    const pullCondition = targetSlot?._id
+      ? { _id: targetSlot._id }
+      : {
+          startTime: targetSlot.startTime,
+          endTime: targetSlot.endTime,
+        };
 
-    if (updated.length === 0) {
+    const result = await Schedule.findOneAndUpdate(
+      { adminId: admin.id, dayOfWeek: validatedDay },
+      { $pull: { timeSlots: pullCondition } },
+      { returnDocument: "after", runValidators: true },
+    );
+
+    if (result && (!result.timeSlots || result.timeSlots.length === 0)) {
       await Schedule.deleteOne({
         adminId: admin.id,
-        dayOfWeek,
+        dayOfWeek: validatedDay,
+        timeSlots: { $size: 0 },
       });
-    } else {
-      await Schedule.findOneAndUpdate(
-        { adminId: admin.id, dayOfWeek },
-        { timeSlots: updated },
-        { returnDocument: "after", runValidators: true },
-      );
     }
 
     revalidatePath("/admin/schedule");
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error removing slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid day of week",
+      };
+    }
     return {
       success: false,
       error: "Failed to remove slot",
@@ -267,25 +324,25 @@ export async function removeTimeSlot(dayOfWeek: string, slotIndex: number) {
 ============================== */
 export async function updateTimeSlot(
   dayOfWeek: string,
-  slotIndex: number,
+  slotIdOrIndex: string | number,
   timeSlot: TimeSlotFormData,
 ) {
   try {
     const admin = await verifyAdmin();
     await connectDB();
 
-    const timezone = await getAdminTimezone();
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
     const validated = timeSlotSchema.parse(timeSlot);
 
     const updatedSlot = {
-      startTime: convertToUTC(validated.startTime, timezone),
-      endTime: convertToUTC(validated.endTime, timezone),
+      startTime: validated.startTime,
+      endTime: validated.endTime,
       isEnabled: validated.isEnabled ?? true,
     };
 
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -294,21 +351,54 @@ export async function updateTimeSlot(
 
     const slots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= slots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? slots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= slots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
     const updatedSlots = [...slots];
-    updatedSlots[slotIndex] = updatedSlot;
+    updatedSlots[targetIndex] = updatedSlot;
 
     const hasOverlap = checkForOverlap(updatedSlots);
     if (hasOverlap) {
       return { success: false, error: "Updated slot overlaps" };
     }
 
+    const targetSlot = slots[targetIndex];
+    let updateFilter: any;
+    let updateOperator: any;
+
+    if (targetSlot?._id) {
+      updateFilter = {
+        adminId: admin.id,
+        dayOfWeek: validatedDay,
+        "timeSlots._id": targetSlot._id,
+      };
+      updateOperator = {
+        $set: {
+          "timeSlots.$.startTime": updatedSlot.startTime,
+          "timeSlots.$.endTime": updatedSlot.endTime,
+          "timeSlots.$.isEnabled": updatedSlot.isEnabled,
+        },
+      };
+    } else {
+      updateFilter = { adminId: admin.id, dayOfWeek: validatedDay };
+      updateOperator = {
+        $set: {
+          [`timeSlots.${targetIndex}.startTime`]: updatedSlot.startTime,
+          [`timeSlots.${targetIndex}.endTime`]: updatedSlot.endTime,
+          [`timeSlots.${targetIndex}.isEnabled`]: updatedSlot.isEnabled,
+        },
+      };
+    }
+
     const result = await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
-      { timeSlots: updatedSlots },
+      updateFilter,
+      updateOperator,
       { returnDocument: "after", runValidators: true },
     );
 
@@ -319,7 +409,14 @@ export async function updateTimeSlot(
       data: serializeDocument(result),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error updating slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid input",
+      };
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update slot",
@@ -332,16 +429,18 @@ export async function updateTimeSlot(
 ============================== */
 export async function toggleTimeSlotStatus(
   dayOfWeek: string,
-  slotIndex: number,
+  slotIdOrIndex: string | number,
   isEnabled: boolean,
 ) {
   try {
     const admin = await verifyAdmin();
     await connectDB();
 
+    const validatedDay = dayOfWeekSchema.parse(dayOfWeek);
+
     const schedule = await Schedule.findOne({
       adminId: admin.id,
-      dayOfWeek,
+      dayOfWeek: validatedDay,
     }).lean();
 
     if (!schedule) {
@@ -350,19 +449,42 @@ export async function toggleTimeSlotStatus(
 
     const slots = schedule.timeSlots || [];
 
-    if (slotIndex < 0 || slotIndex >= slots.length) {
-      return { success: false, error: "Invalid slot index" };
+    const targetIndex =
+      typeof slotIdOrIndex === "string"
+        ? slots.findIndex((s: any) => s._id?.toString() === slotIdOrIndex)
+        : slotIdOrIndex;
+
+    if (targetIndex < 0 || targetIndex >= slots.length) {
+      return { success: false, error: "Invalid slot index or ID" };
     }
 
-    const updated = [...slots];
-    updated[slotIndex] = {
-      ...updated[slotIndex],
-      isEnabled,
-    };
+    const targetSlot = slots[targetIndex];
+    let updateFilter: any;
+    let updateOperator: any;
+
+    if (targetSlot?._id) {
+      updateFilter = {
+        adminId: admin.id,
+        dayOfWeek: validatedDay,
+        "timeSlots._id": targetSlot._id,
+      };
+      updateOperator = {
+        $set: {
+          "timeSlots.$.isEnabled": isEnabled,
+        },
+      };
+    } else {
+      updateFilter = { adminId: admin.id, dayOfWeek: validatedDay };
+      updateOperator = {
+        $set: {
+          [`timeSlots.${targetIndex}.isEnabled`]: isEnabled,
+        },
+      };
+    }
 
     await Schedule.findOneAndUpdate(
-      { adminId: admin.id, dayOfWeek },
-      { timeSlots: updated },
+      updateFilter,
+      updateOperator,
       { returnDocument: "after", runValidators: true },
     );
 
@@ -370,7 +492,14 @@ export async function toggleTimeSlotStatus(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error toggling slot:", error);
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues?.[0]?.message || "Invalid day of week",
+      };
+    }
     return {
       success: false,
       error: "Failed to toggle slot",
