@@ -4,7 +4,7 @@ import Timezone from "@/lib/models/Timezone";
 import connectDB from "@/lib/db";
 import { verifyAdmin } from "@/lib/auth/check-auth";
 
-// ADMIN ONLY (keep this)
+// ADMIN ONLY
 export async function setAdminTimezone(timezone: string) {
   await connectDB();
 
@@ -30,7 +30,7 @@ export async function getAdminTimezone() {
   return getAdminTimezoneById(user.id);
 }
 
-// PUBLIC (FIXED: no verifyAdmin)
+// PUBLIC (no verifyAdmin)
 export async function getAdminTimezoneById(adminId: string) {
   await connectDB();
 

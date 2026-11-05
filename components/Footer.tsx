@@ -36,20 +36,20 @@ export const Footer = () => {
             <div className="flex items-center gap-3 pt-2">
               <Link
                 target="_blank"
-                href=""
+                href="https://www.instagram.com/luxamapremiumgroup?srtk=MWRmcGMwZXlxNng0bQ%3D%3D&utm_source=qr"
                 aria-label="Instagram"
                 className="p-2.5 rounded-full border border-navy-800 bg-navy-900 text-ice-200 hover:text-gold-400 hover:border-gold-500/40 hover:bg-navy-800/80 transition-all shadow-xs"
               >
                 <FaInstagram className="size-4" />
               </Link>
-              <Link
+              {/* <Link
                 target="_blank"
                 href=""
                 aria-label="Facebook"
                 className="p-2.5 rounded-full border border-navy-800 bg-navy-900 text-ice-200 hover:text-gold-400 hover:border-gold-500/40 hover:bg-navy-800/80 transition-all shadow-xs"
               >
                 <FiFacebook className="size-4" />
-              </Link>
+              </Link> */}
             </div>
           </div>
 
@@ -146,7 +146,7 @@ export const Footer = () => {
                 </a>
               </li>
 
-              <li>
+              {/* <li>
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-navy-900 border border-navy-800 text-gold-400 shrink-0 mt-0.5">
                     <IoLocationOutline className="size-4" />
@@ -155,7 +155,7 @@ export const Footer = () => {
                      2331 E Irlo Bronson Memorial Hwy, Kissimmee, FL 34744, United States.
                   </span>
                 </div>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
