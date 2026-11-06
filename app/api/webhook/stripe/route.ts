@@ -88,29 +88,33 @@ export async function POST(req: Request) {
     try {
       const db = getAuthDb();
 
-      const userDetails = await db
-        .collection("user")
-        .findOne(
-          { _id: new ObjectId(booking.userId) },
-          { projection: { name: 1, email: 1 } },
-        );
-
-      const adminDetails = await db
-        .collection("user")
-        .findOne(
-          { _id: new ObjectId(booking.adminId) },
-          { projection: { name: 1, email: 1 } },
-        );
+      const [userDetails, adminDetails] = await Promise.all([
+        db
+          .collection("user")
+          .findOne(
+            { _id: new ObjectId(booking.userId) },
+            { projection: { name: 1, email: 1 } },
+          ),
+        db
+          .collection("user")
+          .findOne(
+            { _id: new ObjectId(booking.adminId) },
+            { projection: { name: 1, email: 1 } },
+          ),
+      ]);
 
       const amount = (session.amount_total! / 100).toFixed(2);
       const currency = session.currency?.toUpperCase();
 
+      const emailTasks: Promise<unknown>[] = [];
+
       // USER EMAIL
       if (userDetails?.email) {
-        await sendEmail({
-          to: userDetails.email,
-          subject: "Booking Confirmed! | Luxama Premium Group",
-          html: `
+        emailTasks.push(
+          sendEmail({
+            to: userDetails.email,
+            subject: "Booking Confirmed! | Luxama Premium Group",
+            html: `
           <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px;">
             <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
               <div style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); padding: 30px; text-align: center;">
@@ -140,7 +144,8 @@ export async function POST(req: Request) {
             </div>
           </div>
           `,
-        });
+          }),
+        );
       }
 
       // ADMIN EMAIL
@@ -164,10 +169,11 @@ export async function POST(req: Request) {
           timeZone: "UTC",
         })} (UTC)`;
 
-        await sendEmail({
-          to: adminDetails.email,
-          subject: "New Booking Confirmed | Luxama Premium Group",
-          html: `
+        emailTasks.push(
+          sendEmail({
+            to: adminDetails.email,
+            subject: "New Booking Confirmed | Luxama Premium Group",
+            html: `
           <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px;">
             <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
               <div style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); padding: 30px; text-align: center;">
@@ -201,7 +207,12 @@ export async function POST(req: Request) {
             </div>
           </div>
           `,
-        });
+          }),
+        );
+      }
+
+      if (emailTasks.length > 0) {
+        await Promise.all(emailTasks);
       }
     } catch (err) {
       console.error("Post-payment notification failed:", err);

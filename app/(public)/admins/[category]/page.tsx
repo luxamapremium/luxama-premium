@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarDays } from "lucide-react";
 import fetchAdminsByEventCategory from "@/app/actions/public/GetAllAdminsForEventGategory";
@@ -9,7 +9,14 @@ import { EVENTS_CATEGORIES } from "@/lib/constants/event-categories";
 import { slugToCategory } from "@/lib/slug";
 import { useEffect, useState } from "react";
 
-// Updated Card to match Hero Section Style (Circular)
+type Admin = {
+  _id: string;
+  name: string;
+  image: string;
+  email?: string;
+};
+
+// Specialist Card matching Homepage Carousel design
 const SpecialistCard = ({
   id,
   img,
@@ -21,32 +28,48 @@ const SpecialistCard = ({
   name: string;
   onSchedule: (id: string) => void;
 }) => {
+  const isRemoteConfigured =
+    img?.startsWith("/") ||
+    img?.includes("res.cloudinary.com") ||
+    img?.includes("images.unsplash.com") ||
+    img?.includes("cdn.example.com");
+
   return (
-    <div className="group flex flex-col items-center w-full transition-all duration-300">
-      {/* Circular Image Container */}
-      <div className="relative mb-6 md:mb-8">
-        <div className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 border-border/80 dark:border-navy-700/80 shadow-md group-hover:border-gold-500/50 group-hover:shadow-gold transition-all duration-300 group-hover:-translate-y-2 bg-card">
-          <img
-            src={img || "/api/placeholder/400/400"}
-            alt={name}
-            className="w-full h-full object-cover object-top"
-          />
+    <div className="relative w-full max-w-[350px] aspect-square rounded-[20px] overflow-hidden bg-navy-900 border border-gold-500 group transition-all duration-300">
+      {/* Full Card Photo with next/image */}
+      <Image
+        src={img || "/logo.png"}
+        alt={name ? `Portrait of ${name}` : "Specialist portrait"}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 350px"
+        className="object-cover object-[center_top] pointer-events-none select-none transition-transform duration-500 group-hover:scale-105"
+        unoptimized={!isRemoteConfigured}
+      />
+
+      {/* Card Content Overlay */}
+      <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
+        {/* Subtle bottom gradient overlay for text readability */}
+        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-navy-950 via-navy-950/75 to-transparent pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center text-center space-y-3">
+          <h3
+            className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-ice-50 uppercase line-clamp-2 drop-shadow-sm max-w-full px-2"
+            title={name}
+          >
+            {name}
+          </h3>
+
+          <Button
+            variant="gold"
+            size="sm"
+            onClick={() => onSchedule(id)}
+            className="pointer-events-auto w-full max-w-[240px] uppercase text-xs tracking-wider rounded-full py-5 font-semibold shadow-gold hover:shadow-gold-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <CalendarDays className="h-4 w-4 shrink-0" />
+            <span>Schedule Consultation</span>
+          </Button>
         </div>
       </div>
-
-      {/* Name */}
-      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-navy-900 dark:text-ice-50 mb-6 md:mb-8 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors text-center">
-        {name}
-      </h3>
-
-      {/* Button */}
-      <Button
-        onClick={() => onSchedule(id)}
-        className="w-full max-w-[260px] bg-gold-500 hover:bg-gold-400 cursor-pointer text-navy-950 uppercase text-[10px] md:text-xs rounded-full py-6 md:py-7 font-semibold shadow-gold hover:shadow-gold-lg transition-all active:scale-95 flex items-center justify-center gap-3"
-      >
-        <CalendarDays className="h-4 w-4 md:h-5 md:w-5" />
-        Schedule Consultation
-      </Button>
     </div>
   );
 };
@@ -57,7 +80,7 @@ export default function AdminListPage({
   params: Promise<{ category: string }>;
 }) {
   const router = useRouter();
-  const [admins, setAdmins] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<Admin[]>([]);
   const [category, setCategory] = useState<string>("");
   const [loading, setLoading] = useState(true);
 

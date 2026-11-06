@@ -77,5 +77,33 @@ BookingSchema.index(
   },
 );
 
+// Optimize client timeline queries filtering by userId and sorting by startTime with deterministic tie-breaker
+BookingSchema.index(
+  { userId: 1, startTime: -1, _id: -1 },
+  { name: "booking_user_timeline_past_idx" },
+);
+
+BookingSchema.index(
+  { userId: 1, startTime: 1, _id: 1 },
+  { name: "booking_user_timeline_upcoming_idx" },
+);
+
+// Optimize admin consultation timeline queries filtering by adminId and sorting by startTime with deterministic tie-breaker
+BookingSchema.index(
+  { adminId: 1, startTime: -1, _id: -1 },
+  { name: "booking_admin_timeline_past_idx" },
+);
+
+BookingSchema.index(
+  { adminId: 1, startTime: 1, _id: 1 },
+  { name: "booking_admin_timeline_upcoming_idx" },
+);
+
+// Optimize admin platform audit sorting by createdAt desc across all bookings with deterministic _id
+BookingSchema.index(
+  { createdAt: -1, _id: -1 },
+  { name: "booking_created_at_idx" },
+);
+
 export const Booking =
   mongoose.models.Booking || mongoose.model<IBooking>("Booking", BookingSchema);

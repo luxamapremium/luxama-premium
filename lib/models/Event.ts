@@ -42,5 +42,23 @@ const EventSchema = new Schema<IEvent>(
   { timestamps: true },
 );
 
+// Optimize category search for active events
+EventSchema.index(
+  { name: 1, isActive: 1 },
+  { name: "event_category_active_idx" },
+);
+
+// Optimize admin events listing sorted by createdAt desc
+EventSchema.index(
+  { adminId: 1, isActive: 1, createdAt: -1 },
+  { name: "event_admin_active_created_idx" },
+);
+
+// Optimize admin all-events listing without isActive filter sorted by createdAt desc
+EventSchema.index(
+  { adminId: 1, createdAt: -1 },
+  { name: "event_admin_created_idx" },
+);
+
 export const Event =
   mongoose.models.Event || mongoose.model<IEvent>("Event", EventSchema)

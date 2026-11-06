@@ -15,7 +15,7 @@ export async function setAdminTimezone(timezone: string) {
     { adminId },
     { timezone },
     { new: true, upsert: true, runValidators: true },
-  );
+  ).lean();
 
   return {
     success: true,
@@ -31,12 +31,14 @@ export async function getAdminTimezone() {
 }
 
 // PUBLIC (no verifyAdmin)
-export async function getAdminTimezoneById(adminId: string) {
+export async function getAdminTimezoneById(adminId: string): Promise<string> {
   await connectDB();
 
-  const config = await Timezone.findOne({ adminId });
+  const config = await Timezone.findOne({ adminId })
+    .select("timezone")
+    .lean<{ timezone?: string } | null>();
 
-  if (!config) {
+  if (!config || !config.timezone) {
     return "UTC"; // safe fallback
   }
 

@@ -1,5 +1,7 @@
-import fetchAllBookingsAdminsAction from "@/app/actions/fetchAllBookingsAdminsAction";
-import Link from "next/link";
+import fetchAllBookingsAdminsAction, {
+  BookingAuditItem,
+} from "@/app/actions/fetchAllBookingsAdminsAction";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Calendar,
   User,
@@ -7,24 +9,19 @@ import {
   Briefcase,
   DollarSign,
   Search,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-// Next.js 15+ searchParams are async, in older versions they are plain objects
 export default async function AllBookingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string }>;
 }) {
   const params = await searchParams;
-  const currentPage = Number(params.page) || 1;
-  const limit = 10;
+  const page = Number(params.page) || 1;
+  const limit = Number(params.limit) || 10;
 
-  // We destructure the new object returned by the server action
-  const { bookings, totalPages, totalBookings } =
-    await fetchAllBookingsAdminsAction(currentPage, limit);
+  const { items: bookings, totalPages, totalItems } =
+    await fetchAllBookingsAdminsAction(page, limit);
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -43,7 +40,7 @@ export default async function AllBookingsPage({
           <div className="flex items-center self-start md:self-center gap-2 bg-card px-4 py-2 rounded-2xl border border-border shadow-luxury-sm font-sans">
             <span className="h-2 w-2 bg-emerald-500 rounded-full animate-pulse" />
             <span className="text-sm font-bold text-navy-900 whitespace-nowrap font-sans">
-              {totalBookings} Total Records
+              {totalItems} Total Records
             </span>
           </div>
         </div>
@@ -68,7 +65,7 @@ export default async function AllBookingsPage({
 
             {/* Booking Rows */}
             <div className="grid grid-cols-1 gap-4">
-              {bookings.map((booking: any) => (
+              {bookings.map((booking: BookingAuditItem) => (
                 <div
                   key={booking._id.toString()}
                   className="group relative grid grid-cols-1 lg:grid-cols-12 items-center md:gap-4 bg-card border border-border hover:border-gold-500/50 p-5 md:p-6 lg:px-8 lg:py-4 rounded-[1.5rem] md:rounded-[2rem] transition-all duration-300 hover:shadow-luxury-lg lg:hover:-translate-y-0.5 font-sans"
@@ -164,35 +161,14 @@ export default async function AllBookingsPage({
               ))}
             </div>
 
-            {/* --- Pagination Controls --- */}
-            <div className="flex items-center justify-between pt-10 font-sans">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-sans">
-                Page {currentPage} of {totalPages}
-              </p>
-              <div className="flex gap-2">
-                <Link
-                  href={`?page=${Math.max(1, currentPage - 1)}`}
-                  className={cn(
-                    "h-10 w-10 flex items-center justify-center rounded-xl border border-border bg-card transition-all font-sans",
-                    currentPage <= 1
-                      ? "opacity-50 pointer-events-none"
-                      : "hover:border-gold-500 hover:text-navy-900",
-                  )}
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Link>
-                <Link
-                  href={`?page=${Math.min(totalPages, currentPage + 1)}`}
-                  className={cn(
-                    "h-10 w-10 flex items-center justify-center rounded-xl border border-border bg-card transition-all font-sans",
-                    currentPage >= totalPages
-                      ? "opacity-50 pointer-events-none"
-                      : "hover:border-gold-500 hover:text-navy-900",
-                  )}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </Link>
-              </div>
+            {/* Standard Reusable Pagination Controls */}
+            <div className="pt-6">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                limit={limit}
+              />
             </div>
           </div>
         )}

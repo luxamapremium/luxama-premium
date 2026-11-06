@@ -15,7 +15,7 @@ import { z } from "zod";
 
 const dayOfWeekSchema = z.enum(DAYS_OF_WEEK);
 
-import { getAdminTimezone } from "./timezoneAction";
+import { getAdminTimezone, getAdminTimezoneById } from "./timezoneAction";
 import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
@@ -93,12 +93,13 @@ export async function getAdminSchedules() {
     const admin = await verifyAdmin();
     await connectDB();
 
-    const timezone = await getAdminTimezone();
-
-    const schedules = await Schedule.find({ adminId: admin.id })
-      .sort({ dayOfWeek: 1 })
-      .lean()
-      .exec();
+    const [timezone, schedules] = await Promise.all([
+      getAdminTimezoneById(admin.id),
+      Schedule.find({ adminId: admin.id })
+        .sort({ dayOfWeek: 1 })
+        .lean()
+        .exec(),
+    ]);
 
     const formatted = schedules.map((schedule) => ({
       _id: schedule._id.toString(),
@@ -207,7 +208,9 @@ export async function addTimeSlot(
     const schedule = await Schedule.findOne({
       adminId: admin.id,
       dayOfWeek: validatedDay,
-    });
+    })
+      .select("timeSlots")
+      .lean();
 
     const currentSlots = schedule?.timeSlots || [];
     const updatedSlots = [...currentSlots, newSlot];
@@ -261,7 +264,9 @@ export async function removeTimeSlot(
     const schedule = await Schedule.findOne({
       adminId: admin.id,
       dayOfWeek: validatedDay,
-    }).lean();
+    })
+      .select("timeSlots")
+      .lean();
 
     if (!schedule) {
       return { success: false, error: "Schedule not found" };
@@ -343,7 +348,9 @@ export async function updateTimeSlot(
     const schedule = await Schedule.findOne({
       adminId: admin.id,
       dayOfWeek: validatedDay,
-    }).lean();
+    })
+      .select("timeSlots")
+      .lean();
 
     if (!schedule) {
       return { success: false, error: "Schedule not found" };
@@ -441,7 +448,9 @@ export async function toggleTimeSlotStatus(
     const schedule = await Schedule.findOne({
       adminId: admin.id,
       dayOfWeek: validatedDay,
-    }).lean();
+    })
+      .select("timeSlots")
+      .lean();
 
     if (!schedule) {
       return { success: false, error: "Schedule not found" };

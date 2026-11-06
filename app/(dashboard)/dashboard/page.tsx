@@ -13,8 +13,21 @@ import {
   ShieldCheck,
   LayoutDashboard,
   ArrowRight,
-  MoreHorizontal,
 } from "lucide-react";
+
+interface DashboardBookingItem {
+  _id: string;
+  startTime: string | Date;
+  endTime?: string | Date;
+  consultationType?: "phone" | "video";
+  zoomJoinUrl?: string;
+  zoomStartUrl?: string;
+  phoneNumber?: string;
+  event?: { name?: string; price?: number } | null;
+  eventId?: { _id?: string; name?: string; price?: number } | null;
+  user?: { name?: string; email?: string } | null;
+  adminId?: { name?: string; email?: string } | null;
+}
 
 export default async function HomeDashboard() {
   const user = await verifyUser();
@@ -25,9 +38,10 @@ export default async function HomeDashboard() {
   let adminUpcomingCount = 0;
 
   if (isAdmin) {
-    const { upcoming, totalPast } = await fetchBookingByAdminIdAction(1, 3);
+    const { upcoming, totalPast, totalUpcoming } =
+      await fetchBookingByAdminIdAction(1, 3);
     displayBookings = upcoming.slice(0, 3);
-    adminUpcomingCount = upcoming.length;
+    adminUpcomingCount = totalUpcoming;
     totalPastCount = totalPast;
   } else {
     const userBookings = await fetchBookingByUserIdAction();
@@ -100,7 +114,7 @@ export default async function HomeDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {displayBookings.map((booking: any) => (
+                  {displayBookings.map((booking: DashboardBookingItem) => (
                     <BookingRow
                       key={booking._id}
                       booking={booking}
@@ -145,9 +159,14 @@ export default async function HomeDashboard() {
   );
 }
 
-function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
+function BookingRow({
+  booking,
+  isAdmin,
+}: {
+  booking: DashboardBookingItem;
+  isAdmin: boolean;
+}) {
   const start = new Date(booking.startTime);
-  const end = new Date(booking.endTime);
 
   const dateStr = start.toLocaleDateString("en-US", {
     month: "short",
@@ -184,7 +203,7 @@ function BookingRow({ booking, isAdmin }: { booking: any; isAdmin: boolean }) {
         <div className="flex items-center gap-2 text-navy-800">
           <Briefcase className="h-3.5 w-3.5 text-gold-600" />
           <span className="text-sm font-medium truncate max-w-[150px] font-sans">
-            {booking.eventId?.name || "Consultation"}
+            {booking.eventId?.name || booking.event?.name || "Consultation"}
           </span>
         </div>
       </td>

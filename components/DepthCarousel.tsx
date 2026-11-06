@@ -165,6 +165,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
     if (!n) return;
     const dir = cfg.tiltDirection === 'left' ? -1 : 1;
     const sc = scaleRef.current;
+    const isMobile = sc < 0.96;
 
     for (let i = 0; i < n; i++) {
       const el = cardRefs.current[i];
@@ -192,7 +193,12 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
       const blurPx = cfg.blur > 0 && back > 0.4 ? Math.min(cfg.blur, ((back - 0.4) / Math.max(0.6, cfg.visibleCards - 0.4)) * cfg.blur) : 0;
       const zi = Math.round(2000 - d * 20);
 
-      el.style.transform = `translate(-50%, -50%) scale(${sc}) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
+      const transformStr = isMobile
+        ? `translate3d(-50%, -50%, 0) scale3d(${sc}, ${sc}, 1) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`
+        : `translate(-50%, -50%) scale(${sc}) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
+
+      el.style.setProperty('-webkit-transform', transformStr);
+      el.style.transform = transformStr;
       el.style.opacity = opacity.toFixed(3);
       el.style.zIndex = String(zi);
       el.style.pointerEvents = shown && opacity > 0.05 ? 'auto' : 'none';
@@ -200,10 +206,14 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
       // Apply blur exclusively to the background photo so button & text are never blurred
       const img = imgRefs.current[i];
       if (img) {
-        if (blurPx < 0.05 && brightness >= 0.98) {
-          img.style.filter = 'none';
+        if (isMobile) {
+          img.style.filter = brightness >= 0.98 ? 'none' : `brightness(${brightness.toFixed(3)})`;
         } else {
-          img.style.filter = `brightness(${brightness.toFixed(3)}) blur(${blurPx.toFixed(2)}px)`;
+          if (blurPx < 0.05 && brightness >= 0.98) {
+            img.style.filter = 'none';
+          } else {
+            img.style.filter = `brightness(${brightness.toFixed(3)}) blur(${blurPx.toFixed(2)}px)`;
+          }
         }
       }
 
@@ -436,7 +446,12 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
     <div
       ref={rootRef}
       className={`relative w-full h-full min-h-[350px] flex items-center justify-center touch-pan-y outline-none select-none cursor-grab active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-gold-500 focus-visible:outline-offset-4 focus-visible:rounded-2xl ${className}`.trim()}
-      style={{ perspective: `${perspective}px`, perspectiveOrigin: '50% 50%' }}
+      style={{
+        perspective: `${perspective}px`,
+        WebkitPerspective: `${perspective}px`,
+        perspectiveOrigin: '50% 50%',
+        WebkitPerspectiveOrigin: '50% 50%',
+      }}
       role="group"
       aria-roledescription="carousel"
       aria-label="Depth carousel"
@@ -447,7 +462,14 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
       onPointerCancel={onPointerEnd}
       onKeyDown={onKeyDown}
     >
-      <div className="absolute inset-0 [transform-style:preserve-3d]" style={{ transformStyle: 'preserve-3d' }} ref={stageRef}>
+      <div
+        className="absolute inset-0 [transform-style:preserve-3d]"
+        style={{
+          transformStyle: 'preserve-3d',
+          WebkitTransformStyle: 'preserve-3d',
+        }}
+        ref={stageRef}
+      >
         {data.map((item, i) => (
           <div
             key={item.id ? `${item.id}-${i}` : i}
@@ -455,7 +477,13 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
-            style={{ width: cardWidth, height: cardHeight, borderRadius: radius }}
+            style={{
+              width: cardWidth,
+              height: cardHeight,
+              borderRadius: radius,
+              WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+              maskImage: 'radial-gradient(white, black)',
+            }}
             aria-roledescription="slide"
             aria-label={item.name ? `${item.name} (${i + 1} of ${count})` : `${i + 1} of ${count}`}
             aria-hidden={active !== i}
@@ -490,7 +518,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
         <>
           <button
             type="button"
-            className="absolute top-1/2 -translate-y-1/2 left-1 sm:left-4 md:left-[calc(50%-280px)] z-[3000] w-9 h-9 sm:w-11 sm:h-11 grid place-items-center border border-gold-500/35 rounded-full bg-navy-950/70 backdrop-blur-md text-ice-50 cursor-pointer transition-all duration-200 hover:bg-navy-900/95 hover:border-gold-400 hover:text-gold-400 hover:shadow-[0_0_20px_-3px_rgba(200,162,74,0.35)] active:-translate-y-1/2 active:scale-95 motion-reduce:transition-none"
+            className="absolute top-1/2 -translate-y-1/2 left-1 sm:left-4 md:left-[calc(50%-280px)] z-[3000] w-9 h-9 sm:w-11 sm:h-11 grid place-items-center border border-gold-500/35 rounded-full bg-navy-950/70 max-md:backdrop-blur-none md:backdrop-blur-md text-ice-50 cursor-pointer transition-all duration-200 hover:bg-navy-900/95 hover:border-gold-400 hover:text-gold-400 hover:shadow-[0_0_20px_-3px_rgba(200,162,74,0.35)] active:-translate-y-1/2 active:scale-95 motion-reduce:transition-none"
             aria-label="Previous slide"
             onClick={() => navigateBy(-1)}
           >
@@ -507,7 +535,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
           </button>
           <button
             type="button"
-            className="absolute top-1/2 -translate-y-1/2 right-1 sm:right-4 md:right-[calc(50%-280px)] z-[3000] w-9 h-9 sm:w-11 sm:h-11 grid place-items-center border border-gold-500/35 rounded-full bg-navy-950/70 backdrop-blur-md text-ice-50 cursor-pointer transition-all duration-200 hover:bg-navy-900/95 hover:border-gold-400 hover:text-gold-400 hover:shadow-[0_0_20px_-3px_rgba(200,162,74,0.35)] active:-translate-y-1/2 active:scale-95 motion-reduce:transition-none"
+            className="absolute top-1/2 -translate-y-1/2 right-1 sm:right-4 md:right-[calc(50%-280px)] z-[3000] w-9 h-9 sm:w-11 sm:h-11 grid place-items-center border border-gold-500/35 rounded-full bg-navy-950/70 max-md:backdrop-blur-none md:backdrop-blur-md text-ice-50 cursor-pointer transition-all duration-200 hover:bg-navy-900/95 hover:border-gold-400 hover:text-gold-400 hover:shadow-[0_0_20px_-3px_rgba(200,162,74,0.35)] active:-translate-y-1/2 active:scale-95 motion-reduce:transition-none"
             aria-label="Next slide"
             onClick={() => navigateBy(1)}
           >
@@ -527,7 +555,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
 
       {showIndicators && count > 1 && (
         <div
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[3000] flex gap-2 py-1.5 px-3.5 rounded-full bg-navy-950/60 backdrop-blur-md border border-gold-500/20"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[3000] flex gap-2 py-1.5 px-3.5 rounded-full bg-navy-950/60 max-md:backdrop-blur-none md:backdrop-blur-md border border-gold-500/20"
           role="tablist"
           aria-label="Slides"
         >

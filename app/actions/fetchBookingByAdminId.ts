@@ -7,76 +7,171 @@ import { verifyAdmin } from "@/lib/auth/check-auth";
 import { Types } from "mongoose";
 import { getAuthDb } from "@/lib/db-client";
 import { ObjectId } from "mongodb";
+import {
+  parsePaginationParams,
+  buildPaginationResponse,
+  withDeterministicSort,
+  PaginatedResult,
+} from "@/lib/pagination";
 
-export async function fetchBookingByAdminIdAction(page = 1, limit = 6) {
+export interface AdminBookingItem {
+  _id: string;
+  consultationType: "phone" | "video";
+  zoomStartUrl?: string;
+  phoneNumber?: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  } | null;
+  event: {
+    _id: string;
+    name: string;
+    price: number;
+  } | null;
+  startTime: string;
+  endTime: string;
+  createdAt: string;
+  status: string;
+}
+
+export interface AdminBookingsResponse {
+  upcoming: AdminBookingItem[];
+  past: AdminBookingItem[];
+  totalPages: number;
+  totalPast: number;
+  totalUpcoming: number;
+  upcomingPagination: PaginatedResult<AdminBookingItem>;
+  pastPagination: PaginatedResult<AdminBookingItem>;
+}
+
+export interface FetchAdminBookingsOptions {
+  page?: unknown;
+  limit?: unknown;
+  pastPage?: unknown;
+  pastLimit?: unknown;
+  upcomingPage?: unknown;
+  upcomingLimit?: unknown;
+}
+
+export async function fetchBookingByAdminIdAction(
+  pageOrOptions: unknown = 1,
+  limitArg: unknown = 6,
+  upcomingPageArg: unknown = 1,
+  upcomingLimitArg: unknown = 6,
+): Promise<AdminBookingsResponse> {
   try {
     const admin = await verifyAdmin();
     await connectDB();
     const adminObjectId = new Types.ObjectId(admin.id);
     const now = new Date();
 
-    // 1. Fetch ALL Upcoming (Admin needs these to see what's next)
-    const upcomingBookings = await Booking.find({
+    // Support both positional arguments and options object
+    const isOptionsObject =
+      typeof pageOrOptions === "object" && pageOrOptions !== null;
+    const opts: FetchAdminBookingsOptions = isOptionsObject
+      ? (pageOrOptions as FetchAdminBookingsOptions)
+      : {};
+
+    const pastPageInput = isOptionsObject
+      ? (opts.pastPage ?? opts.page ?? 1)
+      : pageOrOptions;
+    const pastLimitInput = isOptionsObject
+      ? (opts.pastLimit ?? opts.limit ?? 6)
+      : limitArg;
+
+    const upcomingPageInput = isOptionsObject
+      ? (opts.upcomingPage ?? 1)
+      : upcomingPageArg;
+    const upcomingLimitInput = isOptionsObject
+      ? (opts.upcomingLimit ?? opts.limit ?? 6)
+      : upcomingLimitArg;
+
+    // 1. Parse pagination params for past and upcoming bookings
+    const parsedPast = parsePaginationParams(
+      { page: pastPageInput, limit: pastLimitInput },
+      6,
+    );
+    const parsedUpcoming = parsePaginationParams(
+      { page: upcomingPageInput, limit: upcomingLimitInput },
+      6,
+    );
+
+    // 2. Query definitions with deterministic sorting
+    const upcomingFilter = {
       adminId: adminObjectId,
       startTime: { $gte: now },
-    })
-      .populate({
-        path: "eventId",
-        select: "name price",
-        model: Event,
-      })
-      .sort({ startTime: 1 })
-      .lean();
+    };
+    const upcomingSort = withDeterministicSort({ startTime: 1 }, 1);
 
-    // 2. Paginate ONLY Past Bookings
-    const skip = (page - 1) * limit;
-    const totalPastBookings = await Booking.countDocuments({
+    const pastFilter = {
       adminId: adminObjectId,
       startTime: { $lt: now },
-    });
+    };
+    const pastSort = withDeterministicSort({ startTime: -1 }, -1);
 
-    const pastBookings = await Booking.find({
-      adminId: adminObjectId,
-      startTime: { $lt: now },
-    })
-      .populate({
-        path: "eventId",
-        select: "name price",
-        model: Event,
-      })
-      .sort({ startTime: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
+    // 3. Execute count and data queries concurrently
+    const [totalUpcoming, upcomingBookings, totalPast, pastBookings] =
+      await Promise.all([
+        Booking.countDocuments(upcomingFilter),
+        Booking.find(upcomingFilter)
+          .select(
+            "_id userId eventId consultationType zoomStartUrl phoneNumber status startTime endTime createdAt",
+          )
+          .populate({
+            path: "eventId",
+            select: "name price",
+            model: Event,
+          })
+          .sort(upcomingSort)
+          .skip(parsedUpcoming.skip)
+          .limit(parsedUpcoming.limit)
+          .lean(),
+        Booking.countDocuments(pastFilter),
+        Booking.find(pastFilter)
+          .select(
+            "_id userId eventId consultationType zoomStartUrl phoneNumber status startTime endTime createdAt",
+          )
+          .populate({
+            path: "eventId",
+            select: "name price",
+            model: Event,
+          })
+          .sort(pastSort)
+          .skip(parsedPast.skip)
+          .limit(parsedPast.limit)
+          .lean(),
+      ]);
 
     const allFetched = [...upcomingBookings, ...pastBookings];
-    if (!allFetched.length)
-      return { upcoming: [], past: [], totalPages: 0, totalPast: 0 };
 
-    // Fetch user details (the clients) from auth_db
-    const userIds = allFetched.map((b: any) => new ObjectId(b.userId));
+    // 4. Batch hydrate client user info from auth_db
+    const userIds = allFetched.map((b) => new ObjectId(b.userId));
     const db = getAuthDb();
-    const users = await db
-      .collection("user")
-      .find({ _id: { $in: userIds } }, { projection: { name: 1, email: 1 } })
-      .toArray();
+    const users = userIds.length
+      ? await db
+          .collection("user")
+          .find(
+            { _id: { $in: userIds } },
+            { projection: { name: 1, email: 1 } },
+          )
+          .toArray()
+      : [];
 
     const usersMap = new Map(users.map((u) => [u._id.toString(), u]));
 
-    // Mapping logic
-    const mapBooking = (b: any) => {
-      const userData = usersMap.get(b.userId.toString());
+    const mapBooking = (booking: unknown): AdminBookingItem => {
+      const b = booking as Record<string, unknown>;
+      const userIdStr = String(b.userId);
+      const userData = usersMap.get(userIdStr);
+      const eventObj = b.eventId && typeof b.eventId === "object" ? (b.eventId as Record<string, unknown>) : null;
 
       return {
-        ...b,
-        _id: b._id.toString(),
-
-        // Admin specific fields
-        consultationType: b.consultationType,
-        zoomStartUrl: b.zoomStartUrl, // Changed from joinUrl to startUrl for Admin
-        phoneNumber: b.phoneNumber,
-
-        // Format Client/User Info
+        _id: String(b._id),
+        consultationType: (b.consultationType as "phone" | "video") ?? "video",
+        zoomStartUrl: b.zoomStartUrl ? String(b.zoomStartUrl) : undefined,
+        phoneNumber: b.phoneNumber ? String(b.phoneNumber) : undefined,
+        status: String(b.status ?? "pending"),
         user: userData
           ? {
               _id: userData._id.toString(),
@@ -84,28 +179,44 @@ export async function fetchBookingByAdminIdAction(page = 1, limit = 6) {
               email: userData.email,
             }
           : null,
-
-        // Format Event Info
-        event: b.eventId
+        event: eventObj
           ? {
-              _id: b.eventId._id.toString(),
-              name: b.eventId.name,
-              price: b.eventId.price,
+              _id: String(eventObj._id),
+              name: String(eventObj.name),
+              price: Number(eventObj.price) || 0,
             }
           : null,
-
-        // Ensure dates are strings for the client components
-        startTime: b.startTime?.toISOString(),
-        endTime: b.endTime?.toISOString(),
-        createdAt: b.createdAt?.toISOString(),
+        startTime: b.startTime instanceof Date ? b.startTime.toISOString() : String(b.startTime ?? ""),
+        endTime: b.endTime instanceof Date ? b.endTime.toISOString() : String(b.endTime ?? ""),
+        createdAt: b.createdAt instanceof Date ? b.createdAt.toISOString() : String(b.createdAt ?? ""),
       };
     };
 
+    const mappedUpcoming = upcomingBookings.map(mapBooking);
+    const mappedPast = pastBookings.map(mapBooking);
+
+    const upcomingPagination = buildPaginationResponse<AdminBookingItem>({
+      items: mappedUpcoming,
+      totalItems: totalUpcoming,
+      page: parsedUpcoming.page,
+      limit: parsedUpcoming.limit,
+    });
+
+    const pastPagination = buildPaginationResponse<AdminBookingItem>({
+      items: mappedPast,
+      totalItems: totalPast,
+      page: parsedPast.page,
+      limit: parsedPast.limit,
+    });
+
     return {
-      upcoming: upcomingBookings.map(mapBooking),
-      past: pastBookings.map(mapBooking),
-      totalPages: Math.ceil(totalPastBookings / limit),
-      totalPast: totalPastBookings,
+      upcoming: mappedUpcoming,
+      past: mappedPast,
+      totalPages: pastPagination.totalPages,
+      totalPast,
+      totalUpcoming,
+      upcomingPagination,
+      pastPagination,
     };
   } catch (error) {
     console.error(

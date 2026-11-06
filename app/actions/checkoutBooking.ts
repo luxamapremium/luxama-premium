@@ -33,7 +33,9 @@ export async function createBookingCheckout({
   const sessionUser = await verifyUser();
   const effectiveUserId = sessionUser.id;
 
-  const event = await Event.findById(eventId);
+  const event = await Event.findById(eventId)
+    .select("isFree durationMinutes price name")
+    .lean();
   if (!event) throw new Error("Event not found");
 
   const adminObjectId = new mongoose.Types.ObjectId(adminId);
@@ -124,29 +126,33 @@ export async function createBookingCheckout({
     try {
       const db = getAuthDb();
 
-      const userDetails = await db
-        .collection("user")
-        .findOne(
-          { _id: new ObjectId(effectiveUserId) },
-          { projection: { name: 1, email: 1 } },
-        );
-
-      const adminDetails = await db
-        .collection("user")
-        .findOne(
-          { _id: new ObjectId(adminId) },
-          { projection: { name: 1, email: 1 } },
-        );
+      const [userDetails, adminDetails] = await Promise.all([
+        db
+          .collection("user")
+          .findOne(
+            { _id: new ObjectId(effectiveUserId) },
+            { projection: { name: 1, email: 1 } },
+          ),
+        db
+          .collection("user")
+          .findOne(
+            { _id: new ObjectId(adminId) },
+            { projection: { name: 1, email: 1 } },
+          ),
+      ]);
 
       const typeLabel =
         consultationType === "video" ? "Video call" : "Phone call";
 
+      const emailTasks: Promise<unknown>[] = [];
+
       // USER EMAIL
       if (userDetails?.email) {
-        await sendEmail({
-          to: userDetails.email,
-          subject: "Booking Confirmed! | KS Global Services",
-          html: `
+        emailTasks.push(
+          sendEmail({
+            to: userDetails.email,
+            subject: "Booking Confirmed! | KS Global Services",
+            html: `
           <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px;">
             <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden;">
               <div style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); padding: 30px; text-align: center;">
@@ -173,15 +179,17 @@ export async function createBookingCheckout({
               </div>
             </div>
           </div>`,
-        });
+          }),
+        );
       }
 
       // ADMIN EMAIL
       if (adminDetails?.email) {
-        await sendEmail({
-          to: adminDetails.email,
-          subject: "New Free Consultation | KS Global Services",
-          html: `
+        emailTasks.push(
+          sendEmail({
+            to: adminDetails.email,
+            subject: "New Free Consultation | KS Global Services",
+            html: `
           <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff; padding: 40px 20px; border-top: 4px solid #1e293b;">
             <div style="max-width: 600px; margin: 0 auto;">
               <span style="color: #2563eb; font-weight: bold; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Admin Notification</span>
@@ -224,7 +232,12 @@ export async function createBookingCheckout({
               </table>
             </div>
           </div>`,
-        });
+          }),
+        );
+      }
+
+      if (emailTasks.length > 0) {
+        await Promise.all(emailTasks);
       }
     } catch (err) {
       console.error("Free booking notification failed:", err);

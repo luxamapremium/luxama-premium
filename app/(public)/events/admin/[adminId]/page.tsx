@@ -10,9 +10,8 @@ interface AdminDetailsProps {
 }
 
 export default async function AdminDetails({ params }: AdminDetailsProps) {
-  const user = await verifyUser();
+  const [{ adminId }] = await Promise.all([params, verifyUser()]);
 
-  const { adminId } = await params;
   const response = await getEventsByAdmin(adminId);
   const events = response.success ? response.data : [];
 
