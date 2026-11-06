@@ -3,6 +3,7 @@ import HeroSection from "@/components/Home/HeroSection";
 import HowItWork from "@/components/Home/How-It-Work";
 import OurServices from "@/components/Home/OurServices";
 import WhyChooseUs from "@/components/Home/Why-Choose-Us";
+import AiAssistant from "@/components/AiAssistant";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <OurServices />
       <HowItWork />
       <CallToAction />
+      <AiAssistant />
     </div>
   );
 }

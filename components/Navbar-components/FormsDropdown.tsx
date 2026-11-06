@@ -130,18 +130,6 @@ export const FormsDropdown = ({
                 )}
               </div>
             )}
-
-            {/* Bottom Quick Help bar */}
-            <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Need help finding the right form?</span>
-              <Link
-                href="/contact"
-                onClick={closeAllMenus}
-                className="font-medium text-foreground hover:text-gold-600 dark:hover:text-gold-400 inline-flex items-center gap-1 transition-colors"
-              >
-                Ask Our Team <ArrowRight className="size-3" />
-              </Link>
-            </div>
           </div>
         </div>
       </div>

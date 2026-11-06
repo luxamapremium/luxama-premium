@@ -50,28 +50,6 @@ export const AppointmentsDropdown = ({
             );
           })}
         </div>
-
-        {/* Quick Contact & Free 15-Minute Discovery Call Footer */}
-        <div className="mt-3.5 pt-3 border-t border-border/60 space-y-2.5">
-          {/* Trust Guarantees */}
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="size-3.5 text-navy-900 dark:text-navy-800" />
-              Certified Specialists
-            </span>
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5 text-navy-900 dark:text-navy-800" />
-              Strict Document Privacy
-            </span>
-            <Link
-              href="/contact"
-              onClick={closeAllMenus}
-              className="font-medium text-foreground hover:text-gold-600 dark:hover:text-gold-400 transition-colors inline-flex items-center gap-1"
-            >
-              Need Help? <ArrowRight className="size-3" />
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );
