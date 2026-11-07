@@ -68,48 +68,52 @@ export default function HeroSection() {
 
         {/* Depth Carousel Container (unibody integration with hero background) */}
         <div className="relative w-full h-[460px] md:h-[500px] lg:h-[520px]">
-          <DepthCarousel
-            items={carouselItems}
-            cardWidth={350}
-            cardHeight={350}
-            radius={20}
-            depth={200}
-            spread={85}
-            tilt={20}
-            visibleCards={admins.length}
-            tint="#060D24"
-            autoplay={true}
-            autoplayDelay={8000} //8 seconds
-            renderItem={(item) => (
-              <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
-                {/* Subtle bottom gradient overlay for text readability */}
-                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-navy-950 via-navy-950/75 to-transparent pointer-events-none" />
+          {!isReady ? (
+            <TaxPreparersSkeleton />
+          ) : (
+            <DepthCarousel
+              items={carouselItems}
+              cardWidth={350}
+              cardHeight={350}
+              radius={20}
+              depth={200}
+              spread={85}
+              tilt={20}
+              visibleCards={admins.length}
+              tint="#060D24"
+              autoplay={true}
+              autoplayDelay={8000} //8 seconds
+              renderItem={(item) => (
+                <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
+                  {/* Subtle bottom gradient overlay for text readability */}
+                  <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-navy-950 via-navy-950/75 to-transparent pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col items-center text-center space-y-3">
-                  <h3
-                    className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-ice-50 uppercase line-clamp-2 drop-shadow-sm max-w-full px-2"
-                    title={item.name}
-                  >
-                    {item.name}
-                  </h3>
+                  <div className="relative z-10 flex flex-col items-center text-center space-y-3">
+                    <h3
+                      className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-ice-50 uppercase line-clamp-2 drop-shadow-sm max-w-full px-2"
+                      title={item.name}
+                    >
+                      {item.name}
+                    </h3>
 
-                  <Button
-                    variant="gold"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (item.id) handleSchedule(item.id);
-                    }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    className="pointer-events-auto w-full max-w-[240px] uppercase text-xs tracking-wider rounded-full py-5 font-semibold shadow-gold hover:shadow-gold-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <CalendarDays className="h-4 w-4 shrink-0" />
-                    <span>Schedule Consultation</span>
-                  </Button>
+                    <Button
+                      variant="gold"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (item.id) handleSchedule(item.id);
+                      }}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      className="pointer-events-auto w-full max-w-[240px] uppercase text-xs tracking-wider rounded-full py-5 font-semibold shadow-gold hover:shadow-gold-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    >
+                      <CalendarDays className="h-4 w-4 shrink-0" />
+                      <span>Schedule Consultation</span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-          />
+              )}
+            />
+          )}
         </div>
       </div>
     </section>
