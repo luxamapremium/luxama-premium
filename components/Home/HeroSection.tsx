@@ -47,8 +47,8 @@ export default function HeroSection() {
       style={{ background: 'linear-gradient(180deg, #060D24 0%, #0B1736 60%, #132450 100%)' }}
     >
       {/* Ambient background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-500/10 blur-[140px] pointer-events-none rounded-full" />
-      <div className="absolute -bottom-20 left-1/4 w-80 h-80 bg-navy-800/40 blur-[100px] pointer-events-none rounded-full" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gold-500/10 blur-[140px] max-lg:blur-none max-lg:bg-transparent max-lg:bg-[radial-gradient(ellipse_at_center,rgba(200,162,74,0.07)_0%,rgba(200,162,74,0.035)_45%,transparent_75%)] pointer-events-none rounded-full" />
+      <div className="absolute -bottom-20 left-1/4 w-80 h-80 bg-navy-800/40 blur-[100px] max-lg:blur-none max-lg:bg-transparent max-lg:bg-[radial-gradient(closest-side,rgba(19,36,80,0.25),transparent)] pointer-events-none rounded-full" />
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
         <header className="text-left space-y-5">
           <span className="text-gold-400 font-semibold tracking-[0.25em] uppercase text-xs sm:text-sm block">
