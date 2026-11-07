@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { CalendarDays } from "lucide-react";
 import { getAdmins } from "@/app/actions/public/adminAction";
 import DepthCarousel from "@/components/DepthCarousel";
+import TaxPreparersSkeleton from "@/components/TaxPreparersSkeleton";
 
 type Admin = {
   _id: string;
@@ -31,7 +32,7 @@ export default function HeroSection() {
 
   const handleSchedule = (id: string) => router.push(`events/admin/${id}`);
 
-  if (!isReady || admins.length === 0) return null;
+  if (isReady && admins.length === 0) return null;
 
   const carouselItems = admins.map((admin) => ({
     id: admin._id,
@@ -82,11 +83,11 @@ export default function HeroSection() {
             renderItem={(item) => (
               <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 pointer-events-none">
                 {/* Subtle bottom gradient overlay for text readability */}
-                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-navy-950 via-navy-950/75 to-transparent max-lg:rounded-b-[20px] pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-navy-950 via-navy-950/75 to-transparent pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col items-center text-center space-y-3">
                   <h3
-                    className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-ice-50 uppercase line-clamp-2 drop-shadow-sm max-lg:drop-shadow-none max-lg:[text-shadow:0_1px_2px_rgb(0_0_0/0.15)] max-w-full px-2"
+                    className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-ice-50 uppercase line-clamp-2 drop-shadow-sm max-w-full px-2"
                     title={item.name}
                   >
                     {item.name}
@@ -100,7 +101,7 @@ export default function HeroSection() {
                       if (item.id) handleSchedule(item.id);
                     }}
                     onPointerDown={(e) => e.stopPropagation()}
-                    className="pointer-events-auto w-full max-w-[240px] uppercase text-xs tracking-wider rounded-full py-5 font-semibold shadow-gold hover:shadow-gold-lg flex items-center justify-center gap-2 transition-all max-lg:transition-[color,background-color,box-shadow] motion-reduce:transition-none cursor-pointer"
+                    className="pointer-events-auto w-full max-w-[240px] uppercase text-xs tracking-wider rounded-full py-5 font-semibold shadow-gold hover:shadow-gold-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
                   >
                     <CalendarDays className="h-4 w-4 shrink-0" />
                     <span>Schedule Consultation</span>
