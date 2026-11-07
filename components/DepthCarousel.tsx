@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import Image from 'next/image';
 import gsap from 'gsap';
 
 // Mirrors Tailwind's `max-lg:` breakpoint (< 64rem / 1024px). Desktop (lg+) never enters the compact path.
@@ -12,6 +13,12 @@ const subscribeCompact = (onChange: () => void) => {
 };
 const getCompact = () => window.matchMedia(COMPACT_QUERY).matches;
 const getCompactServer = () => false;
+
+const canOptimizeImage = (src: string): boolean =>
+  src.startsWith('/') ||
+  src.startsWith('https://res.cloudinary.com/') ||
+  src.startsWith('https://images.unsplash.com/') ||
+  src.startsWith('https://cdn.example.com/images/');
 
 export interface DepthCarouselItem {
   image: string;
@@ -148,6 +155,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
   const onChangeRef = useRef<((index: number, item: T) => void) | undefined>(onChange);
 
   const dragRef = useRef<DragState | null>(null);
+  const dragRafRef = useRef<number | null>(null);
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoTimerRef = useRef<number | null>(null);
   const reducedRef = useRef<boolean>(false);
@@ -210,21 +218,30 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
       const zi = Math.round(2000 - d * 20);
 
       if (compact) {
-        // Below `lg` only. iOS Safari flattens the ancestor `perspective` + `preserve-3d` chain, which kills the
-        // translateZ/rotateY depth. A per-card perspective() is mathematically identical (cards share the stage
-        // centre as origin) and needs no 3D context. Dimming is folded into the overlay opacity so each frame
-        // only touches compositor-friendly properties (transform/opacity) instead of re-rasterising filters.
-        el.style.transform = `translate3d(-50%, -50%, 0) perspective(${cfg.perspective}px) scale(${sc}) translateX(${tx.toFixed(2)}px) translateZ(${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
-        el.style.opacity = opacity.toFixed(3);
-        el.style.zIndex = String(zi);
-        el.style.pointerEvents = shown && opacity > 0.05 ? 'auto' : 'none';
+        // Below `lg` only. Only touch compositor-friendly properties (transform/opacity) and guard static styles
+        // so WebKit never rebuilds layer order or repaints off-screen cards mid-transition.
+        const opStr = opacity.toFixed(3);
+        const wasZero = el.style.opacity === '0.000';
+        if (el.style.opacity !== opStr) el.style.opacity = opStr;
+
+        const cZi = String(2000 - Math.round(d));
+        if (el.style.zIndex !== cZi) el.style.zIndex = cZi;
+
+        const pe = shown && opacity > 0.05 ? 'auto' : 'none';
+        if (el.style.pointerEvents !== pe) el.style.pointerEvents = pe;
 
         const cImg = imgRefs.current[i];
-        if (cImg) cImg.style.filter = 'none';
+        if (cImg && cImg.style.filter && cImg.style.filter !== 'none') cImg.style.filter = 'none';
+
+        if (opacity <= 0 && wasZero) continue;
+
+        el.style.transform = `translate3d(-50%, -50%, 0) perspective(${cfg.perspective}px) scale3d(${sc}, ${sc}, 1) translate3d(${tx.toFixed(2)}px, 0, ${tz.toFixed(2)}px) rotateY(${ry.toFixed(3)}deg)`;
+
         const cOv = overlayRefs.current[i];
         if (cOv) {
           const tintAlpha = clamp(back * cfg.falloff * 1.25, 0, 0.86);
-          cOv.style.opacity = clamp(1 - brightness * (1 - tintAlpha), 0, 1).toFixed(3);
+          const ovStr = clamp(1 - brightness * (1 - tintAlpha), 0, 1).toFixed(3);
+          if (cOv.style.opacity !== ovStr) cOv.style.opacity = ovStr;
         }
         continue;
       }
@@ -259,6 +276,10 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
 
   const tweenTo = useCallback(
     (target: number, animate: boolean) => {
+      if (dragRafRef.current !== null) {
+        cancelAnimationFrame(dragRafRef.current);
+        dragRafRef.current = null;
+      }
       tweenRef.current?.kill();
       const cfg = cfgRef.current;
       const proxy = { p: posRef.current };
@@ -374,12 +395,25 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
       drag.lastX = e.clientX;
       drag.lastT = now;
       posRef.current = drag.startPos - dx / stepPx;
-      layout(posRef.current);
+      if (compactRef.current) {
+        if (dragRafRef.current === null) {
+          dragRafRef.current = requestAnimationFrame(() => {
+            dragRafRef.current = null;
+            layout(posRef.current);
+          });
+        }
+      } else {
+        layout(posRef.current);
+      }
     },
     [layout]
   );
 
   const onPointerEnd = useCallback(() => {
+    if (dragRafRef.current !== null) {
+      cancelAnimationFrame(dragRafRef.current);
+      dragRafRef.current = null;
+    }
     const drag = dragRef.current;
     if (!drag) return;
     dragRef.current = null;
@@ -469,6 +503,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
   useEffect(
     () => () => {
       tweenRef.current?.kill();
+      if (dragRafRef.current !== null) cancelAnimationFrame(dragRafRef.current);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
       if (autoTimerRef.current) clearInterval(autoTimerRef.current);
     },
@@ -494,45 +529,56 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
         {data.map((item, i) => (
           <div
             key={item.id ? `${item.id}-${i}` : i}
-            className="absolute top-1/2 left-1/2 origin-center overflow-hidden bg-navy-900 border border-gold-500/25 shadow-[0_30px_60px_-20px_rgba(6,13,36,0.85),0_10px_25px_-10px_rgba(6,13,36,0.65),0_0_25px_-5px_rgba(200,162,74,0.15)] will-change-[transform,opacity] [backface-visibility:hidden] [transform-style:preserve-3d] motion-reduce:will-change-auto cursor-pointer"
+            className="absolute top-1/2 left-1/2 origin-center overflow-hidden bg-navy-900 border border-gold-500/25 shadow-[0_30px_60px_-20px_rgba(6,13,36,0.85),0_10px_25px_-10px_rgba(6,13,36,0.65),0_0_25px_-5px_rgba(200,162,74,0.15)] will-change-[transform,opacity] [backface-visibility:hidden] max-lg:isolate lg:[transform-style:preserve-3d] motion-reduce:will-change-auto cursor-pointer"
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
-            style={
-              isCompact
-                ? {
-                    width: cardWidth,
-                    height: cardHeight,
-                    borderRadius: radius,
-                    // forces WebKit to clip composited children to the rounded corners
-                    WebkitMaskImage: '-webkit-radial-gradient(white, black)',
-                    maskImage: 'radial-gradient(white, black)'
-                  }
-                : { width: cardWidth, height: cardHeight, borderRadius: radius }
-            }
+            style={{ width: cardWidth, height: cardHeight, borderRadius: radius }}
             aria-roledescription="slide"
             aria-label={item.name ? `${item.name} (${i + 1} of ${count})` : `${i + 1} of ${count}`}
             aria-hidden={active !== i}
             onClick={() => onCardClick(i)}
           >
-            <img
-              ref={(el) => {
-                imgRefs.current[i] = el;
-              }}
-              className="w-full h-full object-cover object-[center_top] block pointer-events-none select-none will-change-[filter] max-lg:will-change-auto [backface-visibility:hidden]"
-              src={item.image}
-              alt={item.alt || item.name || ''}
-              draggable={false}
-            />
+            {isCompact && item.image ? (
+              <Image
+                ref={(el) => {
+                  imgRefs.current[i] = el;
+                }}
+                className="w-full h-full object-cover object-[center_top] block pointer-events-none select-none rounded-[inherit]"
+                src={item.image}
+                alt={item.alt || item.name || ''}
+                width={cardWidth}
+                height={cardHeight}
+                sizes={`${cardWidth}px`}
+                preload={i === 0}
+                loading="eager"
+                decoding="async"
+                draggable={false}
+                unoptimized={!canOptimizeImage(item.image)}
+                onLoad={(e) => {
+                  e.currentTarget.decode?.().catch(() => {});
+                }}
+              />
+            ) : (
+              <img
+                ref={(el) => {
+                  imgRefs.current[i] = el;
+                }}
+                className="w-full h-full object-cover object-[center_top] block pointer-events-none select-none will-change-[filter] [backface-visibility:hidden]"
+                src={item.image}
+                alt={item.alt || item.name || ''}
+                draggable={false}
+              />
+            )}
             <span
-              className="absolute inset-0 opacity-0 pointer-events-none mix-blend-multiply z-5"
+              className="absolute inset-0 opacity-0 pointer-events-none mix-blend-multiply max-lg:rounded-[inherit] max-lg:will-change-[opacity] motion-reduce:will-change-auto z-5"
               ref={(el) => {
                 overlayRefs.current[i] = el;
               }}
               style={isCompact ? { background: tint, mixBlendMode: 'normal' } : { background: tint }}
             />
             {renderItem ? (
-              <div className="absolute inset-0 z-10 pointer-events-none [transform:translateZ(1px)] [backface-visibility:hidden]">
+              <div className="absolute inset-0 z-10 pointer-events-none max-lg:rounded-[inherit] max-lg:overflow-hidden lg:[transform:translateZ(1px)] lg:[backface-visibility:hidden]">
                 {renderItem(item, i, active === i)}
               </div>
             ) : null}
@@ -592,7 +638,7 @@ export default function DepthCarousel<T extends DepthCarouselItem = DepthCarouse
               role="tab"
               aria-selected={active === i}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-[7px] p-0 border-0 rounded-full cursor-pointer transition-all max-lg:transition-[width,background-color,box-shadow] duration-250 motion-reduce:transition-none ${
+              className={`h-[7px] p-0 border-0 rounded-full cursor-pointer transition-all max-lg:transition-colors duration-250 motion-reduce:transition-none ${
                 active === i
                   ? 'w-[22px] bg-gold-500 shadow-[0_0_10px_rgba(200,162,74,0.5)]'
                   : 'w-[7px] bg-ice-200/35 hover:bg-gold-500/60'
