@@ -40,7 +40,7 @@ export const DesktopUserMenu = ({
         <div className="size-9 rounded-full bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-700 dark:text-gold-300 font-semibold text-xs overflow-hidden">
           {user?.image ? (
             <img
-              src={user.image}
+              src={user.image || ""}
               alt="Avatar"
               className="size-full object-cover"
             />

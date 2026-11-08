@@ -15,12 +15,12 @@ import { z } from "zod";
 
 const dayOfWeekSchema = z.enum(DAYS_OF_WEEK);
 
-import { getAdminTimezone, getAdminTimezoneById } from "./timezoneAction";
-import { convertToUTC, convertFromUTC } from "@/lib/timezone-converter";
+import { getAdminTimezoneById } from "./timezoneAction";
+import { convertFromUTC } from "@/lib/timezone-converter";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 /* ==============================
-    SERIALIZER
+    SERIALIZER 
 ============================== */
 function serializeDocument(doc: any): any {
   if (!doc) return null;

@@ -24,3 +24,4 @@ export function convertFromUTC(date: Date | string, timezone: string) {
 
   return format(zonedDate, "HH:mm", { timeZone: timezone });
 }
+3

@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import client, { getAuthDb } from "../db-client";
+import { getAuthDb } from "../db-client";
 import { verificationEmail } from "../email/Better-auth/verificationEmail";
 import { resetPasswordEmail } from "../email/Better-auth/resetPasswordEmail";
 import { admin as adminPlugin } from "better-auth/plugins";

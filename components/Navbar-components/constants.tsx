@@ -149,13 +149,7 @@ export const DEFAULT_MENU: MenuItem[] = [
         description: "Submit documents for certified translation services",
         icon: <Globe className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
         url: `/forms/${createSlug("Translation Language Services")}`,
-      },
-      {
-        title: "Business Formation Intake Form LLC",
-        description: "Submit documents for LLC business",
-        icon: <BriefcaseBusiness className="size-4 shrink-0 text-gold-600 dark:text-gold-400" />,
-        url: `/forms/${createSlug("Business Formation Intake Form LLC")}`,
-      },
+      }
     ],
   },
   { title: "About", url: "/about" },
