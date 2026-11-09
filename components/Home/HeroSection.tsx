@@ -161,7 +161,7 @@ export default function HeroSection() {
                       className="pl-6 sm:pl-8 basis-auto shrink-0 select-none"
                     >
                       {/* Untouched black box card design */}
-                      <div className="relative w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] overflow-hidden rounded-[20px] bg-navy-900 border border-gold-500/25 select-none shrink-0">
+                      <div className="relative w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] overflow-hidden rounded-[20px] hover:bg-gold-400 hover:text-navy-900 transition-all duration-300 bg-navy-900 border border-gold-500/25 select-none shrink-0">
                         <img
                           className="w-full h-full object-cover object-[center_top] block pointer-events-none select-none"
                           src={item.image}
