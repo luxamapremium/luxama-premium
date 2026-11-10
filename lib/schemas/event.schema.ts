@@ -3,7 +3,7 @@ import { EVENTS_CATEGORIES } from "@/lib/constants/event-categories";
 
 export const eventSchema = z
   .object({
-    name: z.enum(EVENTS_CATEGORIES).default("Immigration & USCIS Support"),
+    name: z.enum(EVENTS_CATEGORIES).default("Immigration & USCIS Services"),
     description: z.string().optional(),
 
     isFree: z.boolean().default(false),

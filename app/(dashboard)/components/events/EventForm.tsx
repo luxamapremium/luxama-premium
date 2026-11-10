@@ -40,7 +40,7 @@ export function EventForm({
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      name: initialData?.name ?? "Immigration & USCIS Support",
+      name: initialData?.name ?? "Immigration & USCIS Services",
       description: initialData?.description ?? "",
       isFree: initialData?.isFree ?? false,
       price: initialData?.price ?? 0,

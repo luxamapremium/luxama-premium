@@ -1,7 +1,7 @@
 export const EVENTS_CATEGORIES = [
-  "Immigration & USCIS Support",
-  "Tax & Financial Services",
-  "Notary & Document Services",
-  "Business & Administrative Services",
-  "Translation & Language Services",
+  "Immigration & USCIS Services",
+  "Tax & Accounting Services",
+  "Notarization & Documents",
+  "Business Support Services",
+  "Translation & Interpreting",
 ] as const;

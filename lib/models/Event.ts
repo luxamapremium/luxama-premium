@@ -28,7 +28,7 @@ const EventSchema = new Schema<IEvent>(
     name: {
       type: String,
       enum: EVENTS_CATEGORIES,
-      default: "Immigration & USCIS Support",
+      default: "Immigration & USCIS Services",
       required: true,
     },
     description: String,
