@@ -20,57 +20,36 @@ const services = [
     description:
       "Expert guidance for visas, green cards, citizenship filings, and family petitions.",
     icon: Users,
-    url: `/admins/${createSlug("Immigration USCIS Support")}`,
+    url: `/admins/${createSlug("Immigration USCIS Services")}`,
   },
   {
     title: "Tax & Financial",
     description:
       "Strategic tax preparation and IRS compliance for individuals and businesses.",
     icon: Receipt,
-    url: `/admins/${createSlug("Tax Financial Services")}`,
+    url: `/admins/${createSlug("Tax Accounting Services")}`,
   },
   {
     title: "Notary & Legalization",
     description:
       "Official document verification, certified affidavits, and state apostilles.",
     icon: FileSignature,
-    url: `/admins/${createSlug("Notary Document Services")}`,
+    url: `/admins/${createSlug("Notarization Documents")}`,
   },
   {
     title: "Business Formation",
     description:
       "End-to-end LLC setup, state registrations, and operational compliance.",
     icon: Building2,
-    url: `/admins/${createSlug("Business Administrative Services")}`,
+    url: `/admins/${createSlug("Business Support Services")}`,
   },
   {
     title: "Certified Translations",
     description:
       "Multilingual translations for legal, medical, and personal official records.",
     icon: Languages,
-    url: `/admins/${createSlug("Translation Language Services")}`,
-  },
-  {
-    title: "Document Preparation",
-    description:
-      "Accurate paperwork processing to avoid delays and costly filing errors.",
-    icon: FileCheck2,
-    url: `/forms/${createSlug("Tax Financial Services")}`,
-  },
-  {
-    title: "Citizenship & Status",
-    description:
-      "Dedicated support for N-400 applications, status adjustment, and renewals.",
-    icon: Award,
-    url: `/admins/${createSlug("Immigration USCIS Support")}`,
-  },
-  {
-    title: "1-on-1 Consultations",
-    description:
-      "Personalized sessions with certified specialists to map out your goals.",
-    icon: UserCheck,
-    url: `/admins/${createSlug("Other Services")}`,
-  },
+    url: `/admins/${createSlug("Translation Interpreting")}`,
+  }
 ];
 
 export default function ProfessionalServices() {
@@ -89,13 +68,14 @@ export default function ProfessionalServices() {
         <div className="text-center mb-14 md:mb-16 max-w-3xl mx-auto">
           <h2 className="font-sans font-bold text-navy-900 dark:text-ice-50 text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
             Explore the services we{" "}
-            <span className="text-gold-gradient">provide.</span>
+            <span className="text-gold-gradient">provide for our appointments.</span>
           </h2>
           <p className="mt-4 text-navy-700/75 dark:text-ice-200/75 text-sm sm:text-base font-normal leading-relaxed max-w-2xl mx-auto">
-            At Luxama Premium Group, we offer a comprehensive range of legal and
-            financial services designed to meet your personal and business needs.
-            Our experienced professionals deliver tailored solutions with
-            expertise, integrity, and complete confidentiality.
+            At Luxama Premium Group, book an appointment for immigration and USCIS
+            guidance, tax and financial services, notary and legalization, business
+            formation, and certified translations. Our experienced professionals
+            deliver tailored solutions with expertise, integrity, and complete
+            confidentiality.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
